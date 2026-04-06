@@ -1,0 +1,150 @@
+{% extends "supervisor/base.html" %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+
+{% block main %}
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Επιλογές Απαντήσεων</h1>
+
+                <a href="{% url 'supervisor:answer_option_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Νέα Επιλογή
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body table-responsive p-0">
+
+                    <table id="answerOptionsTable" class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Lesson</th>
+                                <th>Ερώτηση</th>
+                                <th>Επιλογή</th>
+                                <th>Σωστή</th>
+                                <th>Ενέργειες</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for option in options %}
+                            <tr>
+                                <td>{{ option.id }}</td>
+
+                                <td>{{ option.question.lesson.title }}</td>
+
+                                <td style="max-width: 320px;">
+                                    <div class="text-truncate">
+                                        {{ option.question.text }}
+                                    </div>
+                                </td>
+
+                                <td style="max-width: 260px;">
+                                    <div class="text-truncate">
+                                        {{ option.text }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {% if option.is_correct %}
+                                    <span class="badge badge-success">Ναι</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Όχι</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <a href="{% url 'supervisor:answer_option_update' option.id %}"
+                                        class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="{{ option.id }}"
+                                        data-url="{% url 'supervisor:answer_option_delete' option.id %}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">Δεν υπάρχουν επιλογές απαντήσεων</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock main %}
+
+
+{% block script_new %}
+<script>
+    $(function () {
+        $('#answerOptionsTable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            order: [[0, 'desc']]
+        });
+
+        $(document).on('click', '.delete-btn', function () {
+            let btn = $(this);
+            let url = btn.data('url');
+
+            Swal.fire({
+                title: 'Είσαι σίγουρος;',
+                text: 'Δεν μπορεί να αναιρεθεί!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ναι, διαγραφή!',
+                cancelButtonText: 'Ακύρωση'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Διαγράφηκε',
+                                text: response.message
+                            });
+
+                            btn.closest('tr').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Σφάλμα',
+                                text: 'Δεν έγινε η διαγραφή'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock script_new %}

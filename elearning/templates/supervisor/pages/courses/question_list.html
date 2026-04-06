@@ -1,0 +1,171 @@
+{% extends "supervisor/base.html" %}
+
+{% block header_new %}
+
+{% endblock header_new %}
+
+
+{% block main %}
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Ερωτήσεις</h1>
+
+                <a href="{% url 'supervisor:question_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Νέα Ερώτηση
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body table-responsive p-0">
+
+                    <table id="questionsTable" class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Lesson</th>
+                                <th>Ερώτηση</th>
+                                <th>Τύπος</th>
+                                <th>Σειρά</th>
+                                <th>Επιλογές</th>
+                                <th>Ενέργειες</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for q in questions %}
+                            <tr>
+                                <td>{{ q.id }}</td>
+
+                                <td>
+                                    {{ q.lesson.title }}
+                                </td>
+
+                                <td style="max-width: 300px;">
+                                    <div class="text-truncate">
+                                        {{ q.text }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {% if q.question_type == 'true_false' %}
+                                    <span class="badge badge-info">Σ/Λ</span>
+                                    {% elif q.question_type == 'single' %}
+                                    <span class="badge badge-primary">Single</span>
+                                    {% elif q.question_type == 'multiple' %}
+                                    <span class="badge badge-warning">Multiple</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ q.order }}</td>
+
+                                <td>
+                                    <span class="badge badge-secondary">
+                                        {{ q.options.count }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a href="{% url 'supervisor:question_update' q.id %}"
+                                        class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="{{ q.id }}"
+                                        data-url="{% url 'supervisor:question_delete' q.id %}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    Δεν υπάρχουν ερωτήσεις
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock main %}
+
+
+{% block script_new %}
+
+<script>
+    $(function () {
+
+        // DataTable init
+        $('#questionsTable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            order: [[0, 'desc']]
+        });
+
+        // DELETE με SweetAlert
+        $(document).on('click', '.delete-btn', function () {
+            let btn = $(this);
+            let url = btn.data('url');
+
+            Swal.fire({
+                title: 'Είσαι σίγουρος;',
+                text: "Δεν μπορεί να αναιρεθεί!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ναι, διαγραφή!',
+                cancelButtonText: 'Ακύρωση'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Διαγράφηκε',
+                                text: response.message
+                            });
+
+                            // remove row
+                            btn.closest('tr').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Σφάλμα',
+                                text: 'Δεν έγινε η διαγραφή'
+                            });
+                        }
+                    });
+
+                }
+            });
+        });
+
+    });
+</script>
+
+{% endblock script_new %}

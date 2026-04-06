@@ -1,0 +1,296 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+{% block header_new %}
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet"
+    href="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock header_new %}
+{% block main %}
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Supervisors</a></li>
+                        <li class="breadcrumb-item active">All</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-12">
+                    <a href="{% url 'supervisor:create_supervisor' %}" class="btn btn-success mb-3">
+                        <i class="fas fa-plus"></i> Νέος Επόπτης
+                    </a>
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">👥 Λίστα Εποπτών</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <table id="supervisorTable" class="table table-bordered table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Όνομα</th>
+                                        <th>Email</th>
+                                        <th>Τμήμα</th>
+                                        <th>Τηλέφωνο</th>
+                                        <th>Ενεργός</th>
+                                        <th>Ενέργειες</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for s in supervisors %}
+                                    <tr data-id="{{ s.unique }}">
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ s.user.username }}</td>
+                                        <td>{{ s.name }}</td>
+                                        <td>{{ s.email }}</td>
+                                        <td>{{ s.department }}</td>
+                                        <td>{{ s.phone }}</td>
+                                        <td>
+                                            {% if s.is_active %}
+                                            <span class="badge badge-success">Ναι</span>
+                                            {% else %}
+                                            <span class="badge badge-secondary">Όχι</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning editBtn"><i
+                                                    class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-info passwordBtn"><i
+                                                    class="fas fa-key"></i></button>
+                                            <button class="btn btn-sm btn-danger deleteBtn"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="messageBox" class="mt-3"></div>
+                </div>
+                <!-- ✅ Modal για Edit -->
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title" id="editModalLabel">✏️ Επεξεργασία Επόπτη</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" id="edit_id">
+
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" name="username" id="edit_username" class="form-control"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Όνομα</label>
+                                        <input type="text" name="name" id="edit_name" class="form-control" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" id="edit_email" class="form-control" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Τμήμα</label>
+                                        <input type="text" name="department" id="edit_department" class="form-control"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Τηλέφωνο</label>
+                                        <input type="text" name="phone" id="edit_phone" class="form-control">
+                                    </div>
+
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" name="is_active" id="edit_is_active"
+                                            class="form-check-input">
+                                        <label for="edit_is_active" class="form-check-label">Ενεργός</label>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Άκυρο</button>
+                                <button type="button" class="btn btn-primary" id="saveEditBtn">Αποθήκευση</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="passwordModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title"><i class="fas fa-key"></i> Αλλαγή Κωδικού</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="passwordForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="password_id">
+                                    <div class="form-group">
+                                        <label>Νέος Κωδικός</label>
+                                        <input type="password" id="new_password" class="form-control" required
+                                            minlength="6">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Επιβεβαίωση Κωδικού</label>
+                                        <input type="password" id="confirm_password" class="form-control" required
+                                            minlength="6">
+                                    </div>
+                                </form>
+                                <div id="passwordMessage" class="mt-2"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-dismiss="modal">Άκυρο</button>
+                                <button class="btn btn-warning text-white" id="savePasswordBtn">Αλλαγή</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock main%}
+
+{% block script_new %}
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script>
+    $(function () {
+        // DataTable
+        $('#supervisorTable').DataTable({
+            responsive: true,
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/el.json' },
+            pageLength: 10,
+            order: [[1, 'asc']]
+        });
+
+        // Διαγραφή supervisor
+        $('.deleteBtn').on('click', function () {
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+
+            if (confirm('Θέλετε σίγουρα να διαγράψετε αυτόν τον επόπτη;')) {
+                $.ajax({
+                    url: `/supervisor/delete/${id}/`,
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    success: function (resp) {
+                        if (resp.success) {
+                            row.fadeOut(300, function () { $(this).remove(); });
+                            $('#messageBox').html('<div class="alert alert-success">' + resp.message + '</div>');
+                        }
+                    }
+                });
+            }
+        });
+
+        // Εμφάνιση modal για Edit
+        $('.editBtn').on('click', function () {
+            const id = $(this).closest('tr').data('id');
+            $.get(`/supervisor/edit/${id}/`, function (resp) {
+                if (resp.success) {
+                    const s = resp.data;
+                    $('#edit_id').val(id);
+                    $('#edit_username').val(s.username);
+                    $('#edit_name').val(s.name);
+                    $('#edit_email').val(s.email);
+                    $('#edit_department').val(s.department);
+                    $('#edit_phone').val(s.phone);
+                    $('#edit_is_active').prop('checked', s.is_active);
+                    $('#editModal').modal('show');
+                }
+            });
+        });
+
+        // Αποθήκευση αλλαγών μέσω AJAX
+        $('#saveEditBtn').on('click', function () {
+            const id = $('#edit_id').val();
+            const formData = {
+                username: $('#edit_username').val(),
+                name: $('#edit_name').val(),
+                email: $('#edit_email').val(),
+                department: $('#edit_department').val(),
+                phone: $('#edit_phone').val(),
+                is_active: $('#edit_is_active').is(':checked') ? 'on' : '',
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            };
+
+            $.post(`/supervisor/edit/${id}/`, formData, function (resp) {
+                if (resp.success) {
+                    $('#editModal').modal('hide');
+                    $('#messageBox').html('<div class="alert alert-success">' + resp.message + '</div>');
+                    setTimeout(() => location.reload(), 800);
+                } else {
+                    let errors = '';
+                    for (let field in resp.errors) {
+                        errors += `<p><strong>${field}:</strong> ${resp.errors[field][0]}</p>`;
+                    }
+                    $('#messageBox').html('<div class="alert alert-danger">' + errors + '</div>');
+                }
+            });
+        });
+
+
+        // ✅ Άνοιγμα Modal Αλλαγής Κωδικού
+        $('.passwordBtn').on('click', function () {
+            const id = $(this).closest('tr').data('id');
+            $('#password_id').val(id);
+            $('#passwordModal').modal('show');
+        });
+
+        $('#savePasswordBtn').on('click', function () {
+            const id = $('#password_id').val();
+            const newPass = $('#new_password').val();
+            const confirmPass = $('#confirm_password').val();
+
+            if (newPass !== confirmPass) {
+                $('#passwordMessage').html('<div class="alert alert-danger">Οι κωδικοί δεν ταιριάζουν.</div>');
+                return;
+            }
+
+            $.post(`/supervisor/change-password/${id}/`, {
+                new_password: newPass,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            }, function (resp) {
+                if (resp.success) {
+                    $('#passwordModal').modal('hide');
+                    $('#messageBox').html('<div class="alert alert-success">' + resp.message + '</div>');
+                } else {
+                    $('#passwordMessage').html('<div class="alert alert-danger">' + resp.error + '</div>');
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock script_new %}

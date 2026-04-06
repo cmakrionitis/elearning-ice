@@ -1,0 +1,57 @@
+{% extends 'courses/base.html' %}
+{% load courses_tags %}
+{% block title %}Μαθήματα{% endblock %}
+
+{% block content %}
+<div class="el-hero mb-4">
+    <span class="el-badge mb-3">Εκπαιδευτική Πλατφόρμα</span>
+    <h1 class="fw-bold">Διαθέσιμα Μαθήματα</h1>
+    <p class="mb-0">
+        Επίλεξε ένα μάθημα, διάβασε τη θεωρία και ολοκλήρωσε το τεστ των 7 ερωτήσεων.
+    </p>
+</div>
+
+<div class="row g-4">
+    {% for course in courses %}
+        {% with progress=progress_map|get_item:course.id %}
+        <div class="col-md-6 col-lg-4">
+            <div class="el-course-card">
+                {% if course.hero_image %}
+                    <img src="{{ course.hero_image.url }}" alt="{{ course.title }}">
+                {% else %}
+                    <div class="p-5 bg-light text-center">Δεν υπάρχει εικόνα</div>
+                {% endif %}
+
+                <div class="p-4">
+                    <h4 class="fw-bold">{{ course.title }}</h4>
+                    <p class="text-muted">{{ course.short_description|default:course.description|truncatechars:130 }}</p>
+
+                    {% if progress %}
+                        <div class="mb-3">
+                            <small class="d-block text-muted">Πρόοδος</small>
+                            <div class="progress" style="height:10px;">
+                                <div class="progress-bar"
+                                     style="width:
+                                     {% if progress.quiz_completed %} 100
+                                     {% elif progress.theory_completed %} 60
+                                     {% else %} 20
+                                     {% endif %} %;">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-primary w-100">
+                        Προβολή μαθήματος
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Δεν υπάρχουν διαθέσιμα μαθήματα.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

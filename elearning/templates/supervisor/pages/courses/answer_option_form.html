@@ -1,0 +1,94 @@
+{% extends "supervisor/base.html" %}
+
+{% block header_new %}
+
+{% endblock header_new %}
+
+
+{% block main %}
+
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <h1>{{ page_title }}</h1>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card card-primary">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% if form.errors or form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>Σφάλματα:</strong>
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                {% endfor %}
+                                {% endfor %}
+
+                                {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label>Ερώτηση</label>
+                            {{ form.question }}
+                            {% if form.question.errors %}
+                            <div class="text-danger small">{{ form.question.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Κείμενο επιλογής</label>
+                            {{ form.text }}
+                            {% if form.text.errors %}
+                            <div class="text-danger small">{{ form.text.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group form-check">
+                            {{ form.is_correct }}
+                            <label class="form-check-label">Σωστή απάντηση</label>
+                            {% if form.is_correct.errors %}
+                            <div class="text-danger small">{{ form.is_correct.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Αποθήκευση
+                        </button>
+
+                        <a href="{% url 'supervisor:answer_option_list' %}" class="btn btn-secondary">
+                            Επιστροφή
+                        </a>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock main %}
+
+
+{% block script_new %}
+<script>
+    $(function () {
+
+        // Αν θέλεις auto focus
+        $('#id_text').focus();
+
+    });
+</script>
+{% endblock script_new %}

@@ -1,0 +1,107 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+
+{% endblock header_new %}
+
+{% block main %}
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Απαντήσεις Χρηστών</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body table-responsive p-0">
+
+                    <table id="userAnswersTable" class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Χρήστης</th>
+                                <th>Lesson</th>
+                                <th>Ερώτηση</th>
+                                <th>Επιλεγμένες Απαντήσεις</th>
+                                <th>Σωστή</th>
+                                <th>Ημερομηνία</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for answer in answers %}
+                            <tr>
+                                <td>{{ answer.id }}</td>
+
+                                <td>
+                                    <strong>{{ answer.user.username }}</strong>
+                                </td>
+
+                                <td>{{ answer.lesson.title }}</td>
+
+                                <td style="max-width: 320px;">
+                                    <div class="text-truncate">
+                                        {{ answer.question.text }}
+                                    </div>
+                                </td>
+
+                                <td style="max-width: 320px;">
+                                    {% with selected=answer.selected_options.all %}
+                                    {% if selected %}
+                                    <div class="d-flex flex-column">
+                                        {% for opt in selected %}
+                                        <span class="mb-1">{{ opt.text }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                    {% endwith %}
+                                </td>
+
+                                <td>
+                                    {% if answer.is_correct %}
+                                    <span class="badge badge-success">Ναι</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Όχι</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ answer.submitted_at|date:"d/m/Y H:i" }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">Δεν υπάρχουν απαντήσεις χρηστών</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock main %}
+
+{% block script_new %}
+<script>
+    $(function () {
+        $('#userAnswersTable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            order: [[0, 'desc']]
+        });
+    });
+</script>
+{% endblock script_new %}

@@ -1,0 +1,76 @@
+{% extends 'courses/base.html' %}
+{% block title %}Αποτέλεσμα - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="el-hero mb-4">
+    <span class="el-badge mb-3">Αποτέλεσμα</span>
+    <h1 class="fw-bold">{{ course.title }}</h1>
+    <p class="mb-0">Ολοκλήρωσες το τεστ του μαθήματος.</p>
+</div>
+
+<div class="el-card p-4 mb-4">
+    <h3 class="fw-bold mb-3">Σκορ</h3>
+    <p class="mb-2"><strong>Σωστές απαντήσεις:</strong> {{ progress.score }} / {{ progress.total_questions }}</p>
+    <p class="mb-2"><strong>Ποσοστό:</strong> {{ progress.percentage }}%</p>
+
+    {% if progress.score >= 6 %}
+        <div class="el-result-good">
+            Πολύ καλή επίδοση. Έχεις κατανοήσει πολύ καλά τη θεωρία.
+        </div>
+    {% elif progress.score >= 4 %}
+        <div class="el-info-box">
+            Καλή προσπάθεια. Έχεις κατανοήσει σε ικανοποιητικό βαθμό τη θεωρία.
+        </div>
+    {% else %}
+        <div class="el-result-bad">
+            Χρειάζεται λίγη ακόμη επανάληψη στη θεωρία.
+        </div>
+    {% endif %}
+</div>
+
+<div class="el-card p-4 mb-4">
+    <h4 class="fw-bold mb-4">Αναλυτικά οι απαντήσεις σου</h4>
+
+    {% for answer in answers %}
+        <div class="mb-4 pb-4 border-bottom">
+            <h5 class="fw-bold">{{ forloop.counter }}. {{ answer.question.text }}</h5>
+
+            <p class="mb-2">
+                <strong>Αποτέλεσμα:</strong>
+                {% if answer.is_correct %}
+                    <span class="text-success">Σωστή</span>
+                {% else %}
+                    <span class="text-danger">Λάθος</span>
+                {% endif %}
+            </p>
+
+            <p class="mb-2"><strong>Οι επιλογές σου:</strong></p>
+            <ul>
+                {% for selected in answer.selected_options.all %}
+                    <li>{{ selected.text }}</li>
+                {% empty %}
+                    <li>Δεν επιλέχθηκε απάντηση</li>
+                {% endfor %}
+            </ul>
+
+            <p class="mb-2"><strong>Σωστή απάντηση:</strong></p>
+            <ul>
+                {% for option in answer.question.options.all %}
+                    {% if option.is_correct %}
+                        <li>{{ option.text }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="d-flex gap-2">
+    <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-outline-primary">
+        Επιστροφή στη θεωρία
+    </a>
+    <a href="{% url 'courses:quiz' course.slug %}" class="btn btn-primary">
+        Επανάληψη τεστ
+    </a>
+</div>
+{% endblock %}

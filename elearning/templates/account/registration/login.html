@@ -1,0 +1,39 @@
+{% extends 'courses/base.html' %}
+{% block title %}Σύνδεση{% endblock %}
+
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span>&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endif %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="el-card p-4">
+            <h2 class="fw-bold mb-3">Σύνδεση</h2>
+            <p class="text-muted mb-4">Συνδεθείτε για να δείτε τη θεωρία και να κάνετε το τεστ.</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Όνομα χρήστη</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Κωδικός</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Σύνδεση</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

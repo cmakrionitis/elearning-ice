@@ -1,0 +1,77 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Lessons</h1>
+        <a href="{% url 'supervisor:lesson_create' %}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Νέο Lesson
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+          <table class="table table-hover text-nowrap">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Module</th>
+                <th>Τίτλος</th>
+                <th>Slug</th>
+                <th>Questions</th>
+                <th>Ενεργό</th>
+                <th>Ημερ.</th>
+                <th>Ενέργειες</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for lesson in lessons %}
+              <tr>
+                <td>{{ lesson.id }}</td>
+                <td>{{ lesson.module.title|default:"-" }}</td>
+                <td>{{ lesson.title }}</td>
+                <td>{{ lesson.slug }}</td>
+                <td>{{ lesson.question_count }}</td>
+                <td>
+                  {% if lesson.is_active %}
+                  <span class="badge badge-success">Ναι</span>
+                  {% else %}
+                  <span class="badge badge-danger">Όχι</span>
+                  {% endif %}
+                </td>
+                <td>{{ lesson.created_at|date:"d/m/Y H:i" }}</td>
+                <td>
+                  <a href="{% url 'supervisor:lesson_update' lesson.id %}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'supervisor:lesson_delete' lesson.id %}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" class="text-center">Δεν υπάρχουν lessons.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block script_new %}
+{% endblock script_new %}

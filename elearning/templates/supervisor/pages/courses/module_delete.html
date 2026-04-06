@@ -1,0 +1,31 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-danger mt-4">
+        <div class="card-header">
+          <h3 class="card-title">Διαγραφή Module</h3>
+        </div>
+        <div class="card-body">
+          <p>Θέλεις σίγουρα να διαγράψεις το module <strong>{{ object.title }}</strong>;</p>
+
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Ναι, διαγραφή</button>
+            <a href="{% url 'supervisor:module_list' %}" class="btn btn-secondary">Ακύρωση</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block script_new %}
+{% endblock script_new %}

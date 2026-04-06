@@ -1,0 +1,156 @@
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+{% if formset.non_form_errors %}
+  <div class="alert alert-danger">
+    {{ formset.non_form_errors }}
+  </div>
+{% endif %}
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Lesson</label>
+      {{ form.lesson }}
+      {% if form.lesson.errors %}
+        <div class="text-danger small">{{ form.lesson.errors }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="form-group">
+      <label>Τύπος Ερώτησης</label>
+      {{ form.question_type }}
+      {% if form.question_type.errors %}
+        <div class="text-danger small">{{ form.question_type.errors }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="form-group">
+      <label>Σειρά</label>
+      {{ form.order }}
+      {% if form.order.errors %}
+        <div class="text-danger small">{{ form.order.errors }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Κείμενο Ερώτησης</label>
+  {{ form.text }}
+  {% if form.text.errors %}
+    <div class="text-danger small">{{ form.text.errors }}</div>
+  {% endif %}
+</div>
+
+<hr>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0">Επιλογές Απάντησης</h5>
+  <button type="button" id="add-option-btn" class="btn btn-primary btn-sm">
+    <i class="fas fa-plus"></i> Προσθήκη επιλογής
+  </button>
+</div>
+
+{{ formset.management_form }}
+
+<div id="options-container">
+  {% for option_form in formset %}
+    <div class="card card-outline card-secondary mb-3 option-form-row" data-index="{{ forloop.counter0 }}">
+      <div class="card-body">
+        {% for hidden in option_form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <div class="form-group mb-2">
+              <label>Κείμενο επιλογής</label>
+              {{ option_form.text }}
+              {% if option_form.text.errors %}
+                <div class="text-danger small">{{ option_form.text.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group mb-2">
+              <label>Σωστή;</label>
+              <div class="form-check mt-2">
+                {{ option_form.is_correct }}
+              </div>
+              {% if option_form.is_correct.errors %}
+                <div class="text-danger small">{{ option_form.is_correct.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group mb-2">
+              <label>&nbsp;</label>
+              <button type="button" class="btn btn-danger btn-block remove-option-btn">
+                <i class="fas fa-trash"></i> Διαγραφή
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {% if option_form.DELETE %}
+          <div style="display:none;">
+            {{ option_form.DELETE }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<script type="text/template" id="empty-form-template">
+  <div class="card card-outline card-secondary mb-3 option-form-row" data-index="__prefix__">
+    <div class="card-body">
+      {% for hidden in formset.empty_form.hidden_fields %}
+        {{ hidden.as_widget }}
+      {% endfor %}
+
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="form-group mb-2">
+            <label>Κείμενο επιλογής</label>
+            {{ formset.empty_form.text }}
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group mb-2">
+            <label>Σωστή;</label>
+            <div class="form-check mt-2">
+              {{ formset.empty_form.is_correct }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group mb-2">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-danger btn-block remove-option-btn">
+              <i class="fas fa-trash"></i> Διαγραφή
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {% if formset.empty_form.DELETE %}
+        <div style="display:none;">
+          {{ formset.empty_form.DELETE }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</script>

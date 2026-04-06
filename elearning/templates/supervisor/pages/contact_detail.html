@@ -1,0 +1,32 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+  <section class="content-header">
+    <h4><i class="fas fa-envelope-open"></i> Προβολή Μηνύματος</h4>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-primary">
+        <div class="card-body">
+          <p><strong>Όνομα:</strong> {{ msg.name }}</p>
+          <p><strong>Email:</strong> {{ msg.email }}</p>
+          <p><strong>Θέμα:</strong> {{ msg.subject }}</p>
+          <p><strong>Ημερομηνία:</strong> {{ msg.created_at|date:"d/m/Y H:i" }}</p>
+          <hr>
+          <p><strong>Μήνυμα:</strong></p>
+          <p>{{ msg.message|linebreaks }}</p>
+        </div>
+      </div>
+      <a href="{% url 'supervisor:contact_list' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Επιστροφή</a>
+    </div>
+  </section>
+
+{% endblock main %}
+{% block script_new %}
+{% endblock script_new %}

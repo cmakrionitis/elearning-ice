@@ -1,0 +1,81 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet"
+    href="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+{% endblock header_new %}
+
+{% block main %}
+
+  <section class="content">
+    <div class="container-fluid mt-4">
+      <div class="row">
+        <div class="col-12">
+          <a href="{% url 'supervisor:author_create' %}" class="btn btn-success mb-3">
+            <i class="fas fa-plus"></i> Νέος Συγγραφέας
+          </a>
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h3 class="card-title">Πίνακας Συγγραφέων</h3>
+            </div>
+            <div class="card-body">
+              <table id="authorsTable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Job Title</th>
+                    <th>Πόλη</th>
+                    <th>Ενέργειες</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for author in authors %}
+                  <tr>
+                    <td>{{ author.user.username }}</td>
+                    <td>{{ author.job_title }}</td>
+                    <td>{{ author.city }}</td>
+                    <td>
+                      <a href="{% url 'supervisor:author_edit' author.pk %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <a href="{% url 'supervisor:author_delete' author.pk %}" class="btn btn-sm btn-danger"
+                         onclick="return confirm('Είσαι σίγουρος;')">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                      <a href="{% url 'supervisor:author_change_password' author.user.id %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-key"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock main %}
+
+{% block script_new %}
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $('#authorsTable').DataTable({
+      responsive: true,
+      language: {
+        url: "{% static 'AdminLTE-3-2-0/plugins/datatables-bs4/i18n/Greek.json' %}"
+      }
+    });
+  });
+</script>
+{% endblock script_new %}

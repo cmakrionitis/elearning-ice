@@ -1,0 +1,101 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+  <section class="content-header">
+    <div class="container-fluid">
+      <h1>{{ page_title }}</h1>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-primary">
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% if form.errors or form.non_field_errors %}
+            <div class="alert alert-danger">
+              <strong>Σφάλματα:</strong>
+              <ul class="mb-0">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label>Lesson</label>
+              {{ form.lesson }}
+              {% if form.lesson.errors %}
+              <div class="text-danger small">{{ form.lesson.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label>Τίτλος</label>
+              {{ form.title }}
+              {% if form.title.errors %}
+              <div class="text-danger small">{{ form.title.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label>Περιεχόμενο</label>
+              {{ form.content }}
+              {% if form.content.errors %}
+              <div class="text-danger small">{{ form.content.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label>Εικόνα</label>
+              {{ form.image }}
+              {% if form.image.errors %}
+              <div class="text-danger small">{{ form.image.errors }}</div>
+              {% endif %}
+
+              {% if object and object.image %}
+              <div class="mt-2">
+                <img src="{{ object.image.url }}" alt="{{ object.title }}" style="max-height: 120px;"
+                  class="img-fluid rounded border">
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label>Σειρά</label>
+              {{ form.order }}
+              {% if form.order.errors %}
+              <div class="text-danger small">{{ form.order.errors }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-save"></i> Αποθήκευση
+            </button>
+
+            <a href="{% url 'supervisor:theory_section_list' %}" class="btn btn-secondary">
+              Επιστροφή
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block script_new %}
+{% endblock script_new %}

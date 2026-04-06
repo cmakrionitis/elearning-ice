@@ -1,0 +1,63 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock header_new %}
+
+{% block main %}
+<div class="content-wrapper">
+  <section class="content-header">
+    <h4><i class="fas fa-users"></i> Λίστα Συνδρομητών</h4>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <table class="table table-bordered table-hover" id="subscriber-table">
+        <thead class="bg-primary text-white">
+          <tr>
+              <th>Όνομα</th>
+              <th>Email</th>
+              <th>Κατηγορία</th>
+              <th>Ημ/νία Εγγραφής</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for s in subscribers %}
+          <tr id="row-{{ s.pk }}">
+            <td>{{ s.name }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.get_category_display }}</td>
+            <td>{{ s.created_at|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+{% endblock main %}
+
+{% block script_new %}
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'AdminLte-3-2-0/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script>
+$(document).ready(function(){
+  // DataTable setup
+  $('#subscriber-table').DataTable({
+    responsive: true,
+    pageLength: 10,
+    order: [[0, 'desc']],
+    language: {
+      url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/el.json'
+    }
+  });  
+});
+</script>
+{% endblock script_new %}

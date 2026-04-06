@@ -1,0 +1,111 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<!--begin::Head-->
+
+<head>
+    {% block header %} {% include 'supervisor/core/header.html' %} {% endblock header %}
+
+    {% block header_new %} {% endblock header_new %}
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="{{ sitefront.get_main_image_url }}"
+                alt="{{ sitefront.site_name|default:'My Website' }}" style="opacity: .8">
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+
+            {% block nav_bar_up %} {% include 'supervisor/core/nav_bar_up.html' %} {% endblock nav_bar_up %}
+
+            {% block nav_bar_notification %} {% include 'supervisor/core/nav_bar_notification.html' %} {% endblock nav_bar_notification %}
+
+            <!--end::Container-->
+        </nav>
+        <!--end::Header-->
+
+        {% block nav_asside %} {% include 'supervisor/core/nav_asside.html' %} {% endblock nav_asside %}
+
+        <div class="content-wrapper">
+        {% if messages %}
+            <section class="content-header">
+            {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'success' %}alert-success
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info{% endif %}
+                alert-dismissible fade show" role="alert">
+
+                {{ message }}
+
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+            </section>
+        
+        {% endif %}
+
+        {% block main %} {% endblock main %}
+        </div>
+
+        {% block footer %} {% include 'supervisor/core/footer.html' %} {% endblock footer %}
+
+        <!-- Control Sidebar -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content -->
+            <div class="p-3">
+                <div class="user-panel d-flex align-items-center mb-3">
+                    <div class="image">
+                        <img src="{% static 'AdminLte-3-2-0/dist/img/user2-160x160.jpg' %}"
+                            class="img-circle elevation-2" alt="User Image" width="40">
+                    </div>
+                    <div class="info text-white ml-2">
+                        <strong>{{ request.user.username }}</strong>
+                    </div>
+                </div>
+
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="{% url 'supervisor:profile' %}" class="text-white d-block mb-2">
+                            <i class="fas fa-user-circle mr-2"></i> Προφίλ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'supervisor:supervisor_sitefront_settings' %}" class="text-white d-block">
+                            <i class="nav-icon fas fa-cog"></i>
+                            Ρυθμίσεις Ιστοσελίδας
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'supervisor:logout' %}" class="text-white d-block">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Αποσύνδεση
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <!-- /.control-sidebar -->
+
+        <!-- /.control-sidebar -->
+
+    </div>
+    <!--end::App Wrapper-->
+
+    {% block script %} {% include 'supervisor/core/script.html' %} {% endblock script %}
+
+    {% block script_new %}{% endblock script_new %}
+</body>
+<!--end::Body-->
+
+</html>

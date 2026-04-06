@@ -1,0 +1,204 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+<!-- Content Header -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-primary"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="{% url 'supervisor:supervisor_dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-primary">
+          <div class="inner">
+            <h3>{{ modules_count }}</h3>
+            <p>Modules</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <a href="{% url 'supervisor:module_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ lessons_count }}</h3>
+            <p>Lessons</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-book"></i>
+          </div>
+          <a href="{% url 'supervisor:lesson_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ theory_count }}</h3>
+            <p>Theory Sections</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <a href="{% url 'supervisor:theory_section_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>{{ questions_count }}</h3>
+            <p>Questions</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-question"></i>
+          </div>
+          <a href="{% url 'supervisor:question_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ answers_count }}</h3>
+            <p>Answer Options</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-list"></i>
+          </div>
+          <a href="{% url 'supervisor:answer_option_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-secondary">
+          <div class="inner">
+            <h3>{{ progress_count }}</h3>
+            <p>User Progress</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <a href="{% url 'supervisor:user_progress_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-dark">
+          <div class="inner">
+            <h3>{{ user_answers_count }}</h3>
+            <p>User Answers</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <a href="{% url 'supervisor:user_answer_list' %}" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ completed_lessons }}</h3>
+            <p>Completed Lessons</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-indigo">
+          <div class="inner">
+            <h3>{{ supervisors_count }}</h3>
+            <p>Supervisors</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <a href="#" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-maroon">
+          <div class="inner">
+            <h3>{{ author_profiles_count }}</h3>
+            <p>Author Profiles</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-user-edit"></i>
+          </div>
+          <a href="#" class="small-box-footer">
+            Περισσότερα <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ theory_completed }}</h3>
+            <p>Theory Completed</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-book-reader"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+{% endblock main %}
+
+{% block script_new %}
+<!-- Chart.js -->
+<script src="{% static 'AdminLte-3-2-0/plugins/chart.js/Chart.min.js' %}"></script>
+{% endblock script_new %}

@@ -1,0 +1,427 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+{% endblock header_new %}
+
+{% block main %}
+
+    <section class="content">
+    <div class="container-fluid mt-4">
+
+        <div id="alert-box"></div>
+
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-edit mr-2"></i>Ενημέρωση Στοιχείων Συγγραφέα
+                </h3>
+            </div>
+
+            <form id="authorEditForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                <input type="hidden" name="id" value="{{ author.id }}">
+
+                <div class="card-body">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+
+                        <!-- Αριστερή στήλη -->
+                        <div class="col-lg-8">
+
+                            <!-- Στοιχεία λογαριασμού -->
+                            <div class="card card-outline card-success mb-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-user-circle mr-2"></i>Στοιχεία Λογαριασμού
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.first_name.id_for_label }}">Όνομα</label>
+                                                {{ form.first_name }}
+                                                {% if form.first_name.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.first_name.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.last_name.id_for_label }}">Επώνυμο</label>
+                                                {{ form.last_name }}
+                                                {% if form.last_name.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.last_name.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.username.id_for_label }}">Username</label>
+                                                {{ form.username }}
+                                                {% if form.username.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.username.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.email.id_for_label }}">Email</label>
+                                                {{ form.email }}
+                                                {% if form.email.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.email.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Βασικά στοιχεία -->
+                            <div class="card card-outline card-primary mb-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-id-card mr-2"></i>Βασικά Στοιχεία
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.phone.id_for_label }}">Τηλέφωνο</label>
+                                                {{ form.phone }}
+                                                {% if form.phone.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.phone.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.date_birth.id_for_label }}">Ημερομηνία Γέννησης</label>
+                                                {{ form.date_birth }}
+                                                {% if form.date_birth.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.date_birth.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.city.id_for_label }}">Πόλη</label>
+                                                {{ form.city }}
+                                                {% if form.city.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.city.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.address.id_for_label }}">Διεύθυνση</label>
+                                                {{ form.address }}
+                                                {% if form.address.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.address.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.country.id_for_label }}">Χώρα</label>
+                                                {{ form.country }}
+                                                {% if form.country.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.country.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="{{ form.zip_code.id_for_label }}">Τ.Κ.</label>
+                                                {{ form.zip_code }}
+                                                {% if form.zip_code.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form.zip_code.errors|striptags }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Πρόσβαση σε lesson modules -->
+                            <div class="card card-outline card-info mb-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-book-reader mr-2"></i>Πρόσβαση σε Ενότητες
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-0">
+                                        <label for="{{ form.lesson_modules.id_for_label }}">Lesson Modules</label>
+                                        {{ form.lesson_modules }}
+                                        <small class="form-text text-muted">
+                                            Επίλεξε τις ενότητες στις οποίες θα έχει πρόσβαση ο συγγραφέας.
+                                        </small>
+                                        {% if form.lesson_modules.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.lesson_modules.errors|striptags }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ρόλοι / Δικαιώματα -->
+                            <div class="card card-outline card-warning mb-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-user-shield mr-2"></i>Ρόλοι / Δικαιώματα
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                {{ form.is_active }}
+                                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                                    Ενεργός λογαριασμός
+                                                </label>
+                                            </div>
+                                            {% if form.is_active.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.is_active.errors|striptags }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                {{ form.can_take_lessons }}
+                                                <label class="form-check-label" for="{{ form.can_take_lessons.id_for_label }}">
+                                                    Επιτρέπεται να παρακολουθεί lessons
+                                                </label>
+                                            </div>
+                                            {% if form.can_take_lessons.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.can_take_lessons.errors|striptags }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Δεξιά στήλη -->
+                        <div class="col-lg-4">
+
+                            <div class="card card-outline card-secondary mb-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-info-circle mr-2"></i>Πληροφορίες
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-2">
+                                        <strong>Slug:</strong>
+                                        {{ author.slug|default:"-" }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Δημιουργήθηκε:</strong>
+                                        {{ author.created_at|date:"d/m/Y H:i" }}
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Τελευταία ενημέρωση:</strong>
+                                        {{ author.updated_at|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="card card-outline card-light">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-lightbulb mr-2"></i>Οδηγίες
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-2">
+                                        Από εδώ μπορείς να ενημερώσεις τα στοιχεία λογαριασμού και τα δικαιώματα πρόσβασης.
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        Αν αφαιρεθεί η πρόσβαση σε modules ή lessons, ο χρήστης δεν θα μπορεί να δει τη θεωρία και τα τεστ που δεν του ανήκουν.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer d-flex justify-content-between align-items-center flex-wrap">
+                    <a href="{% url 'supervisor:author_list' %}" class="btn btn-secondary mb-2">
+                        <i class="fas fa-arrow-left"></i> Πίσω
+                    </a>
+
+                    <button type="submit" class="btn btn-primary mb-2" id="btnSaveProfile">
+                        <i class="fas fa-save"></i> Ενημέρωση
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+{% endblock main %}
+
+{% block script_new %}
+<script>
+    $(function () {
+
+        function showAlert(type, message) {
+            $('#alert-box').html(`
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `);
+        }
+
+        function clearFieldErrors() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback.dynamic-error').remove();
+        }
+
+        function renderFormErrors(errors) {
+            clearFieldErrors();
+
+            let html = '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+            html += '<strong>Υπήρξαν σφάλματα:</strong><ul class="mb-0 mt-2">';
+
+            for (const field in errors) {
+                if (!errors.hasOwnProperty(field)) continue;
+
+                const messages = errors[field];
+
+                messages.forEach(function (message) {
+                    html += `<li><strong>${field}</strong>: ${message}</li>`;
+                });
+
+                const $field = $(`[name="${field}"]`);
+                if ($field.length) {
+                    $field.addClass('is-invalid');
+
+                    if (!$field.next('.invalid-feedback.dynamic-error').length) {
+                        $field.after(`<div class="invalid-feedback dynamic-error">${messages[0]}</div>`);
+                    }
+                }
+            }
+
+            html += '</ul>';
+            html += `
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            `;
+            html += '</div>';
+
+            $('#alert-box').html(html);
+        }
+
+        function resetUploadForm(formSelector, modalSelector) {
+            $(formSelector)[0].reset();
+            $(modalSelector).modal('hide');
+        }
+
+        $('#authorEditForm').on('submit', function (e) {
+            e.preventDefault();
+
+            clearFieldErrors();
+
+            const $btn = $('#btnSaveProfile');
+            const originalHtml = $btn.html();
+            const formData = new FormData(this);
+
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin"></i> Αποθήκευση...');
+
+            $.ajax({
+                url: "{% url 'supervisor:author_edit' author.id %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    showAlert('success', response.message || 'Τα στοιχεία ενημερώθηκαν με επιτυχία!');
+
+                    if (response.cv_url) {
+                        $('#current-cv-box').html(`
+                            <a href="${response.cv_url}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-file-pdf"></i> Προβολή τρέχοντος CV
+                            </a>
+                        `);
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        renderFormErrors(xhr.responseJSON.errors);
+                    } else {
+                        showAlert('danger', 'Σφάλμα κατά την ενημέρωση.');
+                    }
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                    $btn.html(originalHtml);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock script_new %}

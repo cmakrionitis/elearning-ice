@@ -1,0 +1,185 @@
+{% extends "supervisor/base.html" %}
+{% load static %}
+
+{% block header_new %}
+<link rel="stylesheet" href="{% static 'AdminLte-3-2-0/plugins/fontawesome-free/css/all.min.css' %}">
+<style>
+    .img-preview {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 120px;
+        height: auto;
+        margin-top: 5px;
+    }
+</style>
+{% endblock header_new %}
+
+{% block main %}
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-cog"></i> Ρυθμίσεις Ιστοσελίδας</h3>
+                </div>
+
+                <form id="sitefrontForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body">
+
+                        <div class="form-group">
+                            <label>Όνομα Ιστοσελίδας</label>
+                            {{ form.site_name }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Όνομα Ιστοσελίδας Sort</label>
+                            {{ form.site_name_sort }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Περιγραφή</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col">
+                                <label>Λογότυπο</label><br>
+                                {% if sitefront.main_image %}
+                                <img id="logoPreview" src="{{ sitefront.main_image.url }}" class="img-preview">
+                                {% else %}
+                                <img id="logoPreview" src="{% static 'AdminLte-3-2-0/img/no-image.png' %}" class="img-preview">
+                                {% endif %}
+                                {{ form.main_image }}
+                            </div>
+
+                            <div class="col">
+                                <label>Favicon</label><br>
+                                {% if sitefront.favicon %}
+                                <img id="faviconPreview" src="{{ sitefront.favicon.url }}" width="32"
+                                    class="img-preview">
+                                {% else %}
+                                <img id="faviconPreview" src="{% static 'AdminLte-3-2-0/img/no-image.png' %}" width="32"
+                                    class="img-preview">
+                                {% endif %}
+                                {{ form.favicon }}
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5 class="mt-3"><i class="fas fa-share-alt"></i> Social Media</h5>
+                        <div class="form-row">
+                            <div class="col">{{ form.facebook.label_tag }} {{ form.facebook }}</div>
+                            <div class="col">{{ form.instagram.label_tag }} {{ form.instagram }}</div>
+                        </div>
+                        <div class="form-row mt-2">
+                            <div class="col">{{ form.twitter.label_tag }} {{ form.twitter }}</div>
+                            <div class="col">{{ form.linkedin.label_tag }} {{ form.linkedin }}</div>
+                        </div>
+
+                        <hr>
+                        <h5 class="mt-3"><i class="fas fa-envelope"></i> Επικοινωνία</h5>
+                        <div class="form-row">
+                            <div class="col">{{ form.email.label_tag }} {{ form.email }}</div>
+                            <div class="col">{{ form.phone.label_tag }} {{ form.phone }}</div>
+                        </div>
+                        <div class="form-group mt-2">
+                            {{ form.address.label_tag }} {{ form.address }}
+                        </div>
+
+                        <hr>
+                        <h5 class="mt-3"><i class="fas fa-search"></i> SEO Meta</h5>
+                        <div class="form-group">
+                            {{ form.meta_keywords.label_tag }} {{ form.meta_keywords }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.meta_description.label_tag }} {{ form.meta_description }}
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Αποθήκευση
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock main %}
+
+{% block script_new %}
+<script>
+    // -------------------- CSRF Setup --------------------
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    $.ajaxSetup({
+        headers: { 'X-CSRFToken': csrftoken }
+    });
+
+    // -------------------- Image Preview --------------------
+    $('input[name="main_image"]').on('change', function () {
+        const file = this.files[0];
+        if (file) {
+            $('#logoPreview').attr('src', URL.createObjectURL(file));
+        }
+    });
+    $('input[name="favicon"]').on('change', function () {
+        const file = this.files[0];
+        if (file) {
+            $('#faviconPreview').attr('src', URL.createObjectURL(file));
+        }
+    });
+
+    // -------------------- AJAX Save --------------------
+    $('#sitefrontForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        $.ajax({
+            url: "{% url 'supervisor:supervisor_sitefront_settings' %}",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                $('.btn-success').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Αποθήκευση...');
+            },
+            success: function (resp) {
+                $('.btn-success').prop('disabled', false).html('<i class="fas fa-save"></i> Αποθήκευση');
+                if (resp.success) {
+                    $('#logoPreview').attr('src', resp.logo_url);
+                    $('#faviconPreview').attr('src', resp.favicon_url);
+                    toastr.success(resp.message);
+                } else {
+                    toastr.error('Σφάλμα κατά την αποθήκευση.');
+                }
+            },
+            error: function (xhr) {
+                $('.btn-success').prop('disabled', false).html('<i class="fas fa-save"></i> Αποθήκευση');
+                toastr.error('Σφάλμα κατά την αποθήκευση!');
+            }
+        });
+    });
+</script>
+
+<!-- Toastr Notifications -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+{% endblock script_new %}
