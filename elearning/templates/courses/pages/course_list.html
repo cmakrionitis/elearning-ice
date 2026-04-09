@@ -31,11 +31,7 @@
                             <small class="d-block text-muted">Πρόοδος</small>
                             <div class="progress" style="height:10px;">
                                 <div class="progress-bar"
-                                     style="width:
-                                     {% if progress.quiz_completed %} 100
-                                     {% elif progress.theory_completed %} 60
-                                     {% else %} 20
-                                     {% endif %} %;">
+                                     style="width: {% if progress.quiz_completed %}100{% elif progress.theory_completed %}60{% else %}20{% endif %}%;">
                                 </div>
                             </div>
                         </div>

@@ -45,7 +45,7 @@
                     <small>{% if progress.theory_completed %}100%{% else %}80%{% endif %}</small>
                 </div>
                 <div class="progress" style="height:10px;">
-                    <div class="progress-bar" style="width: {% if progress.theory_completed %}100{% else %}80{% endif %}%"></div>
+                    <div class="progress-bar" {% if progress.theory_completed %}style="width: 100%"{% else %}style="width: 80%"{% endif %}></div>
                 </div>
             </div>
 
