@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from .models import Lesson, UserLessonProgress, Question, UserAnswer
+from .models import Lesson, UserLessonProgress, Question, UserAnswer, UserLessonSectionProgress
 from elearning.decorators import author_profile_required
+from django.http import JsonResponse
 
 # Create your views here.
 def get_user_allowed_modules(user):
@@ -51,14 +53,48 @@ def course_detail(request, slug):
         lesson=course
     )
 
-    sections = course.theory_sections.all()
-    total_sections = sections.count()
+    sections = list(course.theory_sections.all())
+    total_sections = len(sections)
+
+    viewed_section_ids = set(
+        UserLessonSectionProgress.objects.filter(
+            user=request.user,
+            lesson=course,
+            viewed=True
+        ).values_list('section_id', flat=True)
+    )
+
+    viewed_count = len(viewed_section_ids)
+
+    theory_progress_percent = 0
+    if total_sections > 0:
+        theory_progress_percent = round((viewed_count / total_sections) * 80)
+
+    # Αν έχει δει όλες τις θεωρίες, θεωρείται ολοκληρωμένη η θεωρία
+    if total_sections > 0 and viewed_count == total_sections:
+        if not progress.theory_completed:
+            progress.theory_completed = True
+            progress.theory_completed_at = timezone.now()
+            progress.save()
+    else:
+        if progress.theory_completed:
+            progress.theory_completed = False
+            progress.theory_completed_at = None
+            progress.save()
+
+    final_progress_percent = 100 if progress.quiz_completed else theory_progress_percent
+
 
     return render(request, 'courses/pages/course_detail.html', {
         'course': course,
         'sections': sections,
         'progress': progress,
         'total_sections': total_sections,
+        'viewed_count': viewed_count,
+        'viewed_section_ids': viewed_section_ids,
+        'theory_progress_percent': theory_progress_percent,
+        'final_progress_percent': final_progress_percent,
+        'total_questions': course.questions.count(),
     })
 
 
@@ -104,9 +140,26 @@ def quiz_view(request, slug):
         lesson=course
     )
 
+    total_sections = course.theory_sections.count()
+
+    viewed_count = UserLessonSectionProgress.objects.filter(
+        user=request.user,
+        lesson=course,
+        viewed=True
+    ).count()
+
+    # Τελικός έλεγχος: πρέπει να έχει δει όλες τις θεωρίες
+    if total_sections == 0 or viewed_count < total_sections:
+        messages.warning(
+            request,
+            'Πρέπει πρώτα να δείτε όλες τις ενότητες θεωρίας για να ξεκλειδώσει το τεστ.'
+        )
+        return redirect('elearning:lesson_detail', slug=lesson.slug)
+
     if not progress.theory_completed:
-        messages.warning(request, 'Πρέπει πρώτα να ολοκληρώσετε τη θεωρία.')
-        return redirect('courses:course_detail', slug=course.slug)
+        progress.theory_completed = True
+        progress.theory_completed_at = timezone.now()
+        progress.save()
 
     questions = list(course.questions.all())
 
@@ -195,4 +248,63 @@ def quiz_result(request, slug):
         'course': course,
         'progress': progress,
         'answers': answers,
+    })
+
+
+@login_required
+@author_profile_required
+@require_POST
+def mark_course_section_viewed(request, slug, section_id):
+    lesson = get_object_or_404(Lesson, slug=slug, is_active=True)
+    section = get_object_or_404(lesson.theory_sections, id=section_id)
+
+    progress, _ = UserLessonProgress.objects.get_or_create(
+        user=request.user,
+        lesson=lesson
+    )
+
+    section_progress, _ = UserLessonSectionProgress.objects.get_or_create(
+        user=request.user,
+        lesson=lesson,
+        section=section
+    )
+
+    if not section_progress.viewed:
+        section_progress.viewed = True
+        section_progress.viewed_at = timezone.now()
+        section_progress.save()
+
+    total_sections = lesson.theory_sections.count()
+
+    viewed_count = UserLessonSectionProgress.objects.filter(
+        user=request.user,
+        lesson=lesson,
+        viewed=True
+    ).count()
+
+    theory_progress_percent = 0
+    if total_sections > 0:
+        theory_progress_percent = round((viewed_count / total_sections) * 80)
+
+    theory_completed = total_sections > 0 and viewed_count == total_sections
+
+    if theory_completed and not progress.theory_completed:
+        progress.theory_completed = True
+        progress.theory_completed_at = timezone.now()
+        progress.save()
+
+    if not theory_completed and progress.theory_completed:
+        progress.theory_completed = False
+        progress.theory_completed_at = None
+        progress.save()
+
+    final_progress_percent = 100 if progress.quiz_completed else theory_progress_percent
+
+    return JsonResponse({
+        'success': True,
+        'viewed_count': viewed_count,
+        'total_sections': total_sections,
+        'theory_progress_percent': theory_progress_percent,
+        'theory_completed': theory_completed,
+        'final_progress_percent': final_progress_percent,
     })

@@ -17,7 +17,7 @@ from .models import Supervisor, ContactMessage, SiteFront
 from .forms import SupervisorCreateForm, SupervisorEditForm, SiteFrontForm, LessonModuleForm, LessonForm, TheorySectionForm,QuestionForm, AnswerOptionForm, BaseAnswerOptionInlineFormSet, AnswerOptionFormSet
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from account.forms import AuthorProfileSupervisorForm, AuthorPasswordChangeForm
+from account.forms import AuthorProfileSupervisorForm, AuthorPasswordChangeForm, QuickAuthorCreateForm
 from account.models import AuthorProfile
 from courses.models import (
     LessonModule, Lesson, TheorySection,
@@ -63,6 +63,24 @@ def logout_view(request):
 @login_required
 @user_passes_test(is_supervisor)
 def dashboard(request):
+    quick_author_form = QuickAuthorCreateForm()
+
+    if request.method == 'POST' and request.POST.get('form_type') == 'quick_author_create':
+        quick_author_form = QuickAuthorCreateForm(request.POST)
+
+        if quick_author_form.is_valid():
+            author = quick_author_form.save()
+
+            messages.success(
+                request,
+                f'Ο author δημιουργήθηκε επιτυχώς. Username: {author.user.username} | Password: !#{author.user.email}-ice2000$!'
+            )
+            return redirect('supervisor:supervisor_dashboard')
+        else:
+            messages.error(request, 'Υπάρχουν σφάλματα στη φόρμα δημιουργίας author.')
+
+    author_profiles = AuthorProfile.objects.select_related('user').prefetch_related('lesson_modules').order_by('-id')
+
     # Αν δεν είναι superuser ή supervisor -> απαγόρευση
     user = request.user
     if not (user.is_superuser or hasattr(user, 'supervisor_profile')):
@@ -86,6 +104,8 @@ def dashboard(request):
 
         'supervisors_count': Supervisor.objects.count(),
         'author_profiles_count': AuthorProfile.objects.count(),
+        'author_profiles': author_profiles,
+        'quick_author_form': quick_author_form,
     }
     return render(request, "supervisor/pages/dashboard.html", context)
 
@@ -334,7 +354,7 @@ def author_delete(request, pk):
     author.delete()
     user.delete()
     messages.success(request, 'Ο συγγραφέας διαγράφηκε επιτυχώς.')
-    return redirect('author_list')
+    return redirect('supervisor:author_list')
 
 @login_required
 @user_passes_test(is_supervisor)

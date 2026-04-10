@@ -19,8 +19,8 @@
   <section class="content">
     <div class="container-fluid">
       <div class="card">
-        <div class="card-body table-responsive p-0">
-          <table class="table table-hover text-nowrap">
+        <div class="card-body table-responsive">
+          <table id="theorysectionTable" class="table table-hover text-nowrap">
             <thead>
               <tr>
                 <th>ID</th>
@@ -60,4 +60,14 @@
 {% endblock %}
 
 {% block script_new %}
+<script>
+    $(function () {
+        $('#theorysectionTable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            pageLength: 10,
+            order: [[0, 'desc']]
+        });
+    });
+</script>
 {% endblock script_new %}

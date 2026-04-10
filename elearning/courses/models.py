@@ -132,6 +132,20 @@ class UserAnswer(models.Model):
         unique_together = ('user', 'lesson', 'question')
 
     def __str__(self):
-        return f"{self.user.username} - {self.question.id}"     
+        return f"{self.user.username} - {self.question.id}"    
+
+class UserLessonSectionProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='section_progress')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='section_progress')
+    section = models.ForeignKey(TheorySection, on_delete=models.CASCADE, related_name='user_views')
+    viewed = models.BooleanField(default=False)
+    viewed_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'lesson', 'section')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.lesson.title} - {self.section.title}"     
+    
   
 

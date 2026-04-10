@@ -173,14 +173,14 @@
             </li>
 
             <li class="nav-item">
-              <a href="{% url 'supervisor:user_progress_list' %}" class="nav-link">
+              <a href="{% url 'supervisor:user_progress_list' %}" class="nav-link {% if request.resolver_match.url_name in 'user_progress_list' %}active{% endif %}">
                 <i class="nav-icon fas fa-chart-line"></i>
                 <p>User Progress</p>
               </a>
             </li>
 
             <li class="nav-item">
-              <a href="{% url 'supervisor:user_answer_list' %}" class="nav-link">
+              <a href="{% url 'supervisor:user_answer_list' %}" class="nav-link {% if request.resolver_match.url_name in 'user_answer_list' %}active{% endif %}">
                 <i class="nav-icon fas fa-user-check"></i>
                 <p>User Answers</p>
               </a>

@@ -1,76 +1,378 @@
 {% extends 'courses/base.html' %}
 {% block title %}{{ course.title }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    .el-sections-nav {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+    }
+
+    .el-section-tab {
+        min-width: 52px;
+        height: 52px;
+        border: 1px solid #dbe3ef;
+        background: #fff;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #0f172a;
+        transition: .2s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .el-section-tab:hover {
+        background: #eff6ff;
+        border-color: #3b82f6;
+        color: #2563eb;
+    }
+
+    .el-section-tab.active {
+        background: #2563eb;
+        color: #fff;
+        border-color: #2563eb;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, .20);
+    }
+
+    .el-section-tab.done {
+        background: #ecfdf5;
+        color: #15803d;
+        border-color: #86efac;
+    }
+
+    .el-slide-card {
+        display: none;
+        animation: fadeSlide .25s ease;
+    }
+
+    .el-slide-card.active {
+        display: block;
+    }
+
+    @keyframes fadeSlide {
+        from { opacity: 0; transform: translateX(10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .el-slide-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .el-progress-note {
+        font-size: .92rem;
+        color: #64748b;
+    }
+
+    .el-unlock-box {
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+    }
+
+    .el-success-unlock {
+        background: #ecfdf5;
+        border-left: 4px solid #16a34a;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="el-hero mb-4">
-    <span class="el-badge mb-3">Θεωρία</span>
-    <h1 class="fw-bold">{{ course.title }}</h1>
-    <p class="mb-0">{{ course.description }}</p>
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+            <span class="el-badge mb-3">Θεωρία Lesson</span>
+            <h1 class="fw-bold">{{ course.title }}</h1>
+            <p class="mb-0">{{ course.description|default:course.short_description }}</p>
+        </div>
+
+        <a href="#" onclick="history.back()" class="btn btn-light el-back-btn">
+            <i class="bi bi-arrow-left"></i>
+            <span>Πίσω</span>
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-8">
-        {% for section in sections %}
-            <div class="el-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="fw-bold mb-0">{{ forloop.counter }}. {{ section.title }}</h3>
-                    <span class="badge bg-primary">Ενότητα {{ forloop.counter }}</span>
+
+        {% if sections %}
+            <div class="el-card p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h5 class="fw-bold mb-0">Ενότητες θεωρίας</h5>
+                    <small class="text-muted">
+                        <span id="viewedCountInline">{{ viewed_count }}</span>/{{ total_sections }} ενότητες προβλήθηκαν
+                    </small>
                 </div>
 
-                {% if section.image %}
-                    <img src="{{ section.image.url }}" class="img-fluid rounded mb-3" alt="{{ section.title }}">
-                {% endif %}
-
-                <div class="mb-3" style="line-height:1.8;">
-                    {{ section.content|linebreaks }}
-                </div>
-
-                <div class="el-info-box">
-                    <strong>Σημείωση:</strong>
-                    Διάβασε προσεκτικά την ενότητα, γιατί οι ερωτήσεις του τεστ βασίζονται στη θεωρία.
+                <div class="el-sections-nav" id="sectionTabs">
+                    {% for section in sections %}
+                        <button type="button"
+                                class="el-section-tab {% if section.id in viewed_section_ids %}done{% endif %} {% if forloop.first %}active{% endif %}"
+                                data-section-index="{{ forloop.counter0 }}"
+                                data-section-id="{{ section.id }}">
+                            {{ forloop.counter }}
+                        </button>
+                    {% endfor %}
                 </div>
             </div>
-        {% empty %}
-            <div class="alert alert-warning">Δεν υπάρχουν ακόμη ενότητες θεωρίας.</div>
-        {% endfor %}
+
+            {% for section in sections %}
+                <div class="el-section el-slide-card {% if forloop.first %}active{% endif %}"
+                     id="section-slide-{{ forloop.counter0 }}"
+                     data-section-id="{{ section.id }}"
+                     data-section-index="{{ forloop.counter0 }}">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h3 class="fw-bold mb-0">{{ forloop.counter }}. {{ section.title }}</h3>
+                        <span class="badge text-bg-primary">Ενότητα {{ forloop.counter }}</span>
+                    </div>
+
+                    {% if section.image %}
+                        <img src="{{ section.image.url }}" class="img-fluid rounded mb-3" alt="{{ section.title }}">
+                    {% endif %}
+
+                    <div class="mb-3" style="line-height:1.8;">
+                        {{ section.content|linebreaks }}
+                    </div>
+
+                    <div class="el-info mt-3">
+                        <strong>Σημείωση:</strong>
+                        Διάβασε προσεκτικά την ενότητα, γιατί οι ερωτήσεις του τεστ βασίζονται στη θεωρία.
+                    </div>
+
+                    <div class="el-slide-actions">
+                        <button type="button"
+                                class="btn btn-outline-secondary prev-section-btn"
+                                {% if forloop.first %}disabled{% endif %}>
+                            <i class="bi bi-arrow-left"></i> Προηγούμενη
+                        </button>
+
+                        <button type="button" class="btn btn-primary next-section-btn">
+                            {% if forloop.last %}
+                                Ολοκλήρωση θεωρίας
+                            {% else %}
+                                Επόμενη <i class="bi bi-arrow-right"></i>
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning border-0 shadow-sm">
+                Δεν υπάρχουν ακόμη ενότητες θεωρίας για αυτό το lesson.
+            </div>
+        {% endif %}
     </div>
 
     <div class="col-lg-4">
         <div class="el-card p-4 sticky-top" style="top:20px;">
-            <h5 class="fw-bold mb-3">Πρόοδος μαθήματος</h5>
+            <h5 class="fw-bold mb-3">Πρόοδος lesson</h5>
 
             <div class="mb-3">
                 <div class="d-flex justify-content-between mb-1">
-                    <small>Θεωρία</small>
-                    <small>{% if progress.theory_completed %}100%{% else %}80%{% endif %}</small>
+                    <small>Συνολική πρόοδος</small>
+                    <small id="progressLabel">
+                        {% if progress.quiz_completed %}
+                            100%
+                        {% else %}
+                            {{ theory_progress_percent }}%
+                        {% endif %}
+                    </small>
                 </div>
-                <div class="progress" style="height:10px;">
-                    <div class="progress-bar" {% if progress.theory_completed %}style="width: 100%"{% else %}style="width: 80%"{% endif %}></div>
+
+                <div class="progress" style="height: 12px; border-radius: 999px;">
+                    <div id="lessonProgressBar"
+                         class="progress-bar {% if progress.quiz_completed %}bg-success{% else %}bg-primary{% endif %}"
+                         style="width: {% if progress.quiz_completed %}100{% else %}{{ theory_progress_percent }}{% endif %}%;">
+                        {% if progress.quiz_completed %}
+                            100%
+                        {% else %}
+                            {{ theory_progress_percent }}%
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="el-progress-note mt-2">
+                    Η θεωρία φτάνει μέχρι το <strong>80%</strong>. Για να φτάσεις στο <strong>100%</strong>, πρέπει να ολοκληρώσεις το τεστ.
                 </div>
             </div>
 
             <hr>
 
             <p><strong>Συνολικές ενότητες:</strong> {{ total_sections }}</p>
-            <p><strong>Ερωτήσεις τεστ:</strong> {{ course.question_count }}</p>
+            <p><strong>Ενότητες που είδες:</strong> <span id="viewedCountText">{{ viewed_count }}</span></p>
+            <p><strong>Ερωτήσεις τεστ:</strong> {{ total_questions }}</p>
 
-            {% if progress.theory_completed %}
-                <div class="alert alert-success">
-                    Έχεις ολοκληρώσει τη θεωρία.
+            {% if progress.quiz_completed %}
+                <div class="el-unlock-box el-success-unlock mb-3">
+                    <strong>Ολοκληρώθηκε!</strong><br>
+                    Έχεις ολοκληρώσει θεωρία και τεστ. Η πρόοδος σου είναι στο 100%.
                 </div>
 
-                <a href="{% url 'courses:quiz' course.slug %}" class="btn btn-success w-100">
+                <a href="{% url 'courses:quiz_result' course.slug %}" class="btn btn-success w-100">
+                    Προβολή αποτελέσματος
+                </a>
+
+            {% elif progress.theory_completed %}
+                <div class="el-unlock-box el-success-unlock mb-3" id="unlockMessageBox">
+                    <strong>Η θεωρία ολοκληρώθηκε.</strong><br>
+                    Έχεις δει όλες τις ενότητες. Για να φτάσεις στο 100%, πρέπει να ολοκληρώσεις το τεστ.
+                </div>
+
+                <a href="{% url 'courses:quiz' course.slug %}" class="btn btn-success w-100" id="quizActionBtn">
                     Μετάβαση στο τεστ
                 </a>
             {% else %}
-                <form method="post" action="{% url 'courses:complete_theory' course.slug %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary w-100">
-                        Ολοκλήρωση θεωρίας
-                    </button>
-                </form>
+                <div class="el-unlock-box mb-3" id="unlockMessageBox">
+                    <strong>Το τεστ είναι κλειδωμένο.</strong><br>
+                    Για να ξεκλειδώσει, πρέπει να δεις όλες τις ενότητες θεωρίας.
+                </div>
+
+                <button type="button" class="btn btn-outline-secondary w-100" disabled id="quizActionBtn">
+                    Το τεστ θα ανοίξει μόλις ολοκληρώσεις όλη τη θεωρία
+                </button>
             {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const slides = document.querySelectorAll('.el-slide-card');
+    const tabs = document.querySelectorAll('.el-section-tab');
+    const progressBar = document.getElementById('lessonProgressBar');
+    const progressLabel = document.getElementById('progressLabel');
+    const viewedCountText = document.getElementById('viewedCountText');
+    const viewedCountInline = document.getElementById('viewedCountInline');
+    const unlockMessageBox = document.getElementById('unlockMessageBox');
+    const quizActionBtn = document.getElementById('quizActionBtn');
+
+    let currentIndex = 0;
+    let viewedSections = new Set([
+        {% for section_id in viewed_section_ids %}
+            {{ section_id }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]);
+
+    const totalSections = {{ total_sections }};
+    const lessonSlug = "{{ course.slug }}";
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+
+        tabs.forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+
+        currentIndex = index;
+        markCurrentSectionViewed();
+    }
+
+    function updateProgressUI() {
+        const viewedCount = viewedSections.size;
+        const theoryProgress = totalSections > 0 ? Math.round((viewedCount / totalSections) * 80) : 0;
+
+        if (viewedCountText) viewedCountText.textContent = viewedCount;
+        if (viewedCountInline) viewedCountInline.textContent = viewedCount;
+
+        progressBar.style.width = theoryProgress + '%';
+        progressBar.textContent = theoryProgress + '%';
+        progressLabel.textContent = theoryProgress + '%';
+
+        if (viewedCount === totalSections && totalSections > 0) {
+            progressBar.classList.remove('bg-primary');
+            progressBar.classList.add('bg-info');
+
+            if (unlockMessageBox) {
+                unlockMessageBox.innerHTML = '<strong>Η θεωρία ολοκληρώθηκε.</strong><br>Έχεις δει όλες τις ενότητες. Για να φτάσεις στο 100%, πρέπει να ολοκληρώσεις το τεστ.';
+                unlockMessageBox.classList.add('el-success-unlock');
+            }
+
+            if (quizActionBtn && quizActionBtn.tagName.toLowerCase() === 'button') {
+                quizActionBtn.outerHTML = `
+                    <a href="{% url 'courses:quiz' course.slug %}" class="btn btn-success w-100" id="quizActionBtn">
+                        Μετάβαση στο τεστ
+                    </a>
+                `;
+            }
+        }
+    }
+
+    function markCurrentSectionViewed() {
+        const activeSlide = slides[currentIndex];
+        if (!activeSlide) return;
+
+        const sectionId = activeSlide.dataset.sectionId;
+        if (viewedSections.has(Number(sectionId))) {
+            updateProgressUI();
+            return;
+        }
+
+        fetch(`/elearning/course/${lessonSlug}/section/${sectionId}/viewed/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                viewedSections.add(Number(sectionId));
+
+                const currentTab = document.querySelector(`.el-section-tab[data-section-id="${sectionId}"]`);
+                if (currentTab) {
+                    currentTab.classList.add('done');
+                }
+
+                updateProgressUI();
+            }
+        })
+        .catch(error => {
+            console.error('Section view error:', error);
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+            const index = Number(this.dataset.sectionIndex);
+            showSlide(index);
+        });
+    });
+
+    document.querySelectorAll('.prev-section-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (currentIndex > 0) {
+                showSlide(currentIndex - 1);
+            }
+        });
+    });
+
+    document.querySelectorAll('.next-section-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (currentIndex < slides.length - 1) {
+                showSlide(currentIndex + 1);
+            } else {
+                markCurrentSectionViewed();
+                updateProgressUI();
+            }
+        });
+    });
+
+    showSlide(0);
+    updateProgressUI();
+});
+</script>
 {% endblock %}

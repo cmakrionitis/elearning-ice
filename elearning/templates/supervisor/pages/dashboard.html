@@ -192,6 +192,120 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Γρήγορη Δημιουργία User + AuthorProfile</h3>
+          </div>
+          <div class="card-body">
+
+            {% include "supervisor/includes/form_errors.html" with form=quick_author_form %}
+
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="quick_author_create">
+
+              <div class="form-group">
+                <label>{{ quick_author_form.first_name.label }}</label>
+                {{ quick_author_form.first_name }}
+              </div>
+
+              <div class="form-group">
+                <label>{{ quick_author_form.last_name.label }}</label>
+                {{ quick_author_form.last_name }}
+              </div>
+
+              <div class="form-group">
+                <label>{{ quick_author_form.email.label }}</label>
+                {{ quick_author_form.email }}
+              </div>
+
+              <div class="form-group">
+                <label>{{ quick_author_form.lesson_modules.label }}</label>
+                <div class="border rounded p-2">
+                  {{ quick_author_form.lesson_modules }}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Δημιουργία
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Λίστα Author Profiles</h3>
+          </div>
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Pass</th>
+                  <th>Όνομα</th>
+                  <th>Email</th>
+                  <th>Modules</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for author in author_profiles %}
+                <tr>
+                  <td>{{ author.id }}</td>
+                  <td>
+                    {% if author.user %}
+                    {{ author.user.username }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if author.user %}
+                    !#{{ author.user.email }}-ice2000$!
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if author.user %}
+                    {{ author.user.first_name }} {{ author.user.last_name }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if author.user %}
+                    {{ author.user.email }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% for module in author.lesson_modules.all %}
+                    <span class="badge badge-info mr-1">{{ module.title }}</span>
+                    {% empty %}
+                    <span class="text-muted">Χωρίς module</span>
+                    {% endfor %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center">Δεν υπάρχουν Author Profiles</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
