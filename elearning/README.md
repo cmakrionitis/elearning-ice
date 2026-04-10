@@ -48,28 +48,6 @@ pip install -r requirements.txt
 
 ---
 
-## 🔐 Φόρτωση Environment Variables
-
-Βεβαιώσου ότι χρησιμοποιείς το package:
-
-```bash
-pip install python-dotenv
-```
-
-και στο `settings.py`:
-
-```python
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG") == "True"
-```
-
----
-
 ## 🗄️ Database Setup
 
 ```bash
