@@ -48,36 +48,6 @@ pip install -r requirements.txt
 
 ---
 
-## ⚙️ Ρύθμιση .env αρχείου
-
-Δημιούργησε ένα αρχείο `.env` στη ρίζα του project:
-
-```bash
-touch .env
-```
-
-ή σε Windows:
-
-```bash
-type nul > .env
-```
-
-### Παράδειγμα `.env`:
-
-```env
-DEBUG=True
-SECRET_KEY=your-secret-key
-ALLOWED_HOSTS=127.0.0.1,localhost
-
-DB_NAME=your_db_name
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_HOST=localhost
-DB_PORT=5432
-```
-
----
-
 ## 🔐 Φόρτωση Environment Variables
 
 Βεβαιώσου ότι χρησιμοποιείς το package:
