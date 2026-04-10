@@ -79,6 +79,28 @@ python manage.py runserver
 
 ---
 
+## User Admin 
+
+url Admin: [http://127.0.0.1:8000/supervisor/login/](http://127.0.0.1:8000/supervisor/login/)
+
+User: iceuser
+
+Password: test12345
+
+---
+
+## User 
+
+url User test: http://127.0.0.1:8000/accounts/login/
+
+User test: khrestosmakruonites
+
+Password: !#cmakrionitis@gmail.com-ice2000$!
+
+Create New User: Login as Admin ([http://127.0.0.1:8000/supervisor/login/](http://127.0.0.1:8000/supervisor/login/)) go to -> Dashboard -> Γρήγορη Δημιουργία User + AuthorProfile
+
+---
+
 ## 📁 Δομή Project (ενδεικτικά)
 
 ```
