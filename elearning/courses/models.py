@@ -4,6 +4,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django_ckeditor_5.fields import CKEditor5Field
 
 class LessonModule(models.Model):
     title = models.CharField(max_length=255)
@@ -52,7 +53,12 @@ class Lesson(models.Model):
 class TheorySection(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='theory_sections')
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = CKEditor5Field(
+        'Περιεχόμενο',
+        config_name='extends',
+        blank=True,
+        null=True
+    )
     image = models.ImageField(upload_to='theory_sections/', blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
 

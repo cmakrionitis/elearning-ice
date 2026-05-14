@@ -74,6 +74,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+## Install Package 
+```
+python -m pip install <package>
+```
+
 Το project θα τρέχει στο:
 👉 http://127.0.0.1:8000/
 

@@ -6,6 +6,7 @@ from django.forms import inlineformset_factory
 from django.utils.text import slugify
 from django.forms import BaseInlineFormSet
 from .models import Supervisor, ContactMessage, SiteFront
+from django_ckeditor_5.widgets import CKEditor5Widget
 from courses.models import (
     LessonModule, Lesson, TheorySection,
     Question, AnswerOption
@@ -182,10 +183,10 @@ class TheorySectionForm(forms.ModelForm):
     class Meta:
         model = TheorySection
         fields = ['lesson', 'title', 'content', 'image', 'order']
+
         widgets = {
             'lesson': forms.Select(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'order': forms.NumberInput(attrs={'class': 'form-control'}),
         }
