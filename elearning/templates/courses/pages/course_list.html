@@ -13,7 +13,7 @@
 
 <div class="row g-4">
     {% for course in courses %}
-        {% with progress=progress_map|get_item:course.id %}
+        {% with progress=progress_map|get_item:course.id bbb_meeting=bbb_meeting_map|get_item:course.id %}
         <div class="col-md-6 col-lg-4">
             <div class="el-course-card h-100 d-flex flex-column">
                 {% if course.hero_image %}
@@ -151,6 +151,15 @@
                     {% endif %}
 
                     <div class="mt-auto">
+
+                        {% if bbb_meeting %}
+                            <a href="{% url 'courses:lesson_meeting_user' course.slug %}" 
+                            class="btn btn-danger w-100 mb-2" target="_blank">
+                                <i class="bi bi-camera-video"></i>
+                                Είσοδος στο Live Μάθημα
+                            </a>
+                        {% endif %}
+
                         <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-primary w-100">
                             Προβολή μαθήματος
                         </a>

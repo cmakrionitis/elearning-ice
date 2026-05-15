@@ -3,7 +3,9 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from .models import Lesson, UserLessonProgress, Question, UserAnswer, UserLessonSectionProgress
+
+from courses.services.bigbluebutton import BigBlueButtonService
+from .models import BigBlueButtonMeeting, Lesson, UserLessonProgress, Question, UserAnswer, UserLessonSectionProgress
 from elearning.decorators import author_profile_required
 from django.http import JsonResponse
 
@@ -23,6 +25,8 @@ def course_list(request):
     courses = Lesson.objects.filter(
         is_active=True,
         module__in=allowed_modules
+    ).select_related(
+        'module'
     ).distinct()
 
     progress_map = {
@@ -30,9 +34,18 @@ def course_list(request):
         for p in UserLessonProgress.objects.filter(user=request.user)
     }
 
+    bbb_meeting_map = {
+        meeting.lesson_id: meeting
+        for meeting in BigBlueButtonMeeting.objects.filter(
+            lesson__in=courses,
+            is_active=True
+        )
+    }
+
     return render(request, 'courses/pages/course_list.html', {
         'courses': courses,
-        'progress_map': progress_map
+        'progress_map': progress_map,
+        'bbb_meeting_map': bbb_meeting_map,
     })
 
 
@@ -308,3 +321,33 @@ def mark_course_section_viewed(request, slug, section_id):
         'theory_completed': theory_completed,
         'final_progress_percent': final_progress_percent,
     })
+
+
+@login_required
+@author_profile_required
+def lesson_meeting_user(request, lesson_slug):
+    lesson = get_object_or_404(Lesson, slug=lesson_slug, is_active=True)
+    meeting = get_object_or_404(BigBlueButtonMeeting, lesson=lesson, is_active=True)
+
+    # Προαιρετικός έλεγχος ότι είναι AuthorProfile
+    if not hasattr(request.user, "author_profile"):
+        messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το μάθημα.")
+        return redirect("login")
+
+    # Προαιρετικός έλεγχος ότι έχει πρόσβαση στο module
+    if not request.user.author_profile.lesson_modules.filter(id=lesson.module_id).exists():
+        messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το lesson.")
+        return redirect("courses:module_list")
+
+    bbb = BigBlueButtonService()
+
+    full_name = request.user.get_full_name() or request.user.username
+
+    attendee_link = bbb.join_url(
+        meeting=meeting,
+        full_name=full_name,
+        user_id=request.user.id,
+        role="attendee"
+    )
+
+    return redirect(attendee_link)

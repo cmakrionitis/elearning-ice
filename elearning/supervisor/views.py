@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden, JsonResponse
+
+from courses.services.bigbluebutton import BigBlueButtonService
 from .models import Supervisor, ContactMessage, SiteFront
 from .forms import SupervisorCreateForm, SupervisorEditForm, SiteFrontForm, LessonModuleForm, LessonForm, TheorySectionForm,QuestionForm, AnswerOptionForm, BaseAnswerOptionInlineFormSet, AnswerOptionFormSet
 from django.contrib.auth import authenticate, login, logout
@@ -20,7 +22,7 @@ from django.contrib import messages
 from account.forms import AuthorProfileSupervisorForm, AuthorPasswordChangeForm, QuickAuthorCreateForm
 from account.models import AuthorProfile
 from courses.models import (
-    LessonModule, Lesson, TheorySection,
+    BigBlueButtonMeeting, LessonModule, Lesson, TheorySection,
     Question, AnswerOption, UserLessonProgress, UserAnswer
 )
 
@@ -852,4 +854,105 @@ def navbar_contact_messages(request):
     return render(request, 'supervisor/core/nav_bar_notification.html', {
         'messages_contact': messages,
         'badge_count': badge_count,
+    })
+
+
+@login_required
+@user_passes_test(is_supervisor)
+def create_bbb_meeting(request, lesson_slug):
+    lesson = get_object_or_404(Lesson, slug=lesson_slug, is_active=True)
+
+    meeting_id = f"lesson-{lesson.id}-{uuid.uuid4().hex[:8]}"
+
+    meeting = BigBlueButtonMeeting.objects.create(
+        lesson=lesson,
+        title=f"Live μάθημα - {lesson.title}",
+        meeting_id=meeting_id,
+        created_by=request.user,
+    )
+
+    bbb = BigBlueButtonService()
+    bbb.create_meeting(
+        meeting_id=meeting.meeting_id,
+        name=meeting.title,
+        moderator_pw=meeting.moderator_pw,
+        attendee_pw=meeting.attendee_pw,
+    )
+
+    messages.success(request, "Το BigBlueButton meeting δημιουργήθηκε.")
+    return redirect("supervisor:join_bbb_meeting", meeting_id=meeting.meeting_id)
+
+
+@login_required
+@user_passes_test(is_supervisor)
+def join_bbb_meeting(request, meeting_id):
+    meeting = get_object_or_404(BigBlueButtonMeeting, meeting_id=meeting_id, is_active=True)
+
+    full_name = request.user.get_full_name() or request.user.username
+
+    role = "moderator" if request.user.is_staff else "attendee"
+
+    bbb = BigBlueButtonService()
+    url = bbb.join_url(
+        meeting_id=meeting.meeting_id,
+        full_name=full_name,
+        user_id=request.user.id,
+        role=role,
+    )
+
+    return redirect(url)
+
+@login_required
+@user_passes_test(is_supervisor)
+def supervisor_create_lesson_meeting(request, lesson_slug):
+    lesson = get_object_or_404(Lesson, slug=lesson_slug)
+
+    meeting, created = BigBlueButtonMeeting.objects.get_or_create(
+        lesson=lesson,
+        defaults={
+            "title": f"Live μάθημα - {lesson.title}",
+            "meeting_id": f"lesson-{lesson.id}-{uuid.uuid4().hex[:10]}",
+            "created_by": request.user,
+        }
+    )
+
+    bbb = BigBlueButtonService()
+    bbb.create_meeting(meeting)
+
+    if created:
+        messages.success(request, "Το BigBlueButton meeting δημιουργήθηκε επιτυχώς.")
+    else:
+        messages.info(request, "Το meeting υπήρχε ήδη και ενεργοποιήθηκε ξανά.")
+
+    return redirect("supervisor:lesson_meeting_links", lesson_slug=lesson.slug)
+
+@login_required
+@user_passes_test(is_supervisor)
+def supervisor_lesson_meeting_links(request, lesson_slug):
+    lesson = get_object_or_404(Lesson, slug=lesson_slug)
+    meeting = get_object_or_404(BigBlueButtonMeeting, lesson=lesson, is_active=True)
+
+    bbb = BigBlueButtonService()
+
+    full_name = request.user.get_full_name() or request.user.username
+
+    moderator_link = bbb.join_url(
+        meeting=meeting,
+        full_name=full_name,
+        user_id=request.user.id,
+        role="moderator"
+    )
+
+    attendee_link = bbb.join_url(
+        meeting=meeting,
+        full_name="Συμμετέχων",
+        user_id="attendee-preview",
+        role="attendee"
+    )
+
+    return render(request, "supervisor/pages/courses/lesson_meeting_links.html", {
+        "lesson": lesson,
+        "meeting": meeting,
+        "moderator_link": moderator_link,
+        "attendee_link": attendee_link,
     })

@@ -10,4 +10,5 @@ urlpatterns = [
     path('course/<slug:slug>/section/<int:section_id>/viewed/', views.mark_course_section_viewed, name='mark_course_section_viewed'),
     path('course/<slug:slug>/quiz/', views.quiz_view, name='quiz'),
     path('course/<slug:slug>/result/', views.quiz_result, name='quiz_result'),
+    path("course/<slug:lesson_slug>/meeting/",views.lesson_meeting_user,name="lesson_meeting_user"),
 ]

@@ -151,7 +151,32 @@ class UserLessonSectionProgress(models.Model):
         unique_together = ('user', 'lesson', 'section')
 
     def __str__(self):
-        return f"{self.user.username} - {self.lesson.title} - {self.section.title}"     
+        return f"{self.user.username} - {self.lesson.title} - {self.section.title}"   
+
+
+class BigBlueButtonMeeting(models.Model):
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        related_name='bbb_meetings'
+    )
+    title = models.CharField(max_length=255)
+    meeting_id = models.CharField(max_length=255, unique=True)
+
+    moderator_pw = models.CharField(max_length=50, default='mp')
+    attendee_pw = models.CharField(max_length=50, default='ap')
+
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title      
     
   
 

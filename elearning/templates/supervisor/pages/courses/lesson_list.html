@@ -51,13 +51,28 @@
                 </td>
                 <td>{{ lesson.created_at|date:"d/m/Y H:i" }}</td>
                 <td>
-                  <a href="{% url 'supervisor:lesson_update' lesson.id %}" class="btn btn-warning btn-sm">
-                    <i class="fas fa-edit"></i>
+                <a href="{% url 'supervisor:lesson_update' lesson.id %}" class="btn btn-warning btn-sm" title="Επεξεργασία">
+                  <i class="fas fa-edit"></i>
+                </a>
+
+                <a href="{% url 'supervisor:lesson_delete' lesson.id %}" class="btn btn-danger btn-sm" title="Διαγραφή">
+                  <i class="fas fa-trash"></i>
+                </a>
+
+                {% if lesson.bbb_meeting and lesson.bbb_meeting.is_active %}
+                  <a href="{% url 'supervisor:lesson_meeting_links' lesson.slug %}" 
+                    class="btn btn-info btn-sm"
+                    title="BigBlueButton Links">
+                    <i class="fas fa-link"></i>
                   </a>
-                  <a href="{% url 'supervisor:lesson_delete' lesson.id %}" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash"></i>
+                {% else %}
+                  <a href="{% url 'supervisor:create_lesson_meeting' lesson.slug %}" 
+                    class="btn btn-success btn-sm"
+                    title="Create BigBlueButton Meeting">
+                    <i class="fas fa-video"></i>
                   </a>
-                </td>
+                {% endif %}
+              </td>
               </tr>
               {% empty %}
               <tr>

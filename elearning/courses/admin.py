@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LessonModule, Lesson, TheorySection, Question, AnswerOption, UserLessonProgress, UserAnswer
+from .models import LessonModule, Lesson, TheorySection, Question, AnswerOption, UserLessonProgress, UserAnswer, BigBlueButtonMeeting
 
 # Register your models here.
 class TheorySectionInline(admin.TabularInline):
@@ -43,3 +43,12 @@ class UserLessonProgressAdmin(admin.ModelAdmin):
 @admin.register(UserAnswer)
 class UserAnswerAdmin(admin.ModelAdmin):
     list_display = ('user', 'lesson', 'question', 'is_correct', 'submitted_at')
+
+@admin.register(BigBlueButtonMeeting)
+class BigBlueButtonMeetingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'lesson', 'meeting_id', 'is_active', 'created_by', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('title', 'meeting_id', 'lesson__title')
+    readonly_fields = ('created_at',)
+
+    

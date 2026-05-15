@@ -58,4 +58,27 @@ urlpatterns = [
     path('courses/user-progress/', views.user_progress_list, name='user_progress_list'),
     path('courses/user-answers/', views.user_answer_list, name='user_answer_list'),
 
+    # BBB
+    path(
+        'lesson/<slug:lesson_slug>/bbb/create_new/',
+        views.create_bbb_meeting,
+        name='create_bbb_meeting'
+    ),
+    path(
+        'bbb/<str:meeting_id>/join/',
+        views.join_bbb_meeting,
+        name='join_bbb_meeting'
+    ),
+    path(
+        "courses/<slug:lesson_slug>/bbb/create/",
+        views.supervisor_create_lesson_meeting,
+        name="create_lesson_meeting"
+    ),
+
+    path(
+        "courses/<slug:lesson_slug>/bbb/links/",
+        views.supervisor_lesson_meeting_links,
+        name="lesson_meeting_links"
+    ),
+
 ]

@@ -233,3 +233,7 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"  # Possible values: "staff", "authen
 CKEDITOR_5_IMAGE_CLEANUP = True
 CKEDITOR_5_MAX_FILE_SIZE = 5 # Max size in MB
 
+
+BBB_SERVER_URL = "https://bbbcareer.unipi.gr/bigbluebutton/api"
+BBB_SECRET = "5hf0LNZW9pkpDkxIuvpYW0JfpAWNNnQrOnKv7VcA"
+

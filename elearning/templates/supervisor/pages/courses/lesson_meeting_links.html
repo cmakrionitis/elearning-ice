@@ -1,0 +1,76 @@
+{% extends "supervisor/base.html" %}
+
+{% block header_new %}
+
+{% endblock header_new %}
+
+
+{% block main %}
+
+    <section class="content-header">
+    <div class="container-fluid">
+        <h1>BigBlueButton Meeting</h1>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-video mr-2"></i>
+                    BigBlueButton Meeting
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <h4 class="font-weight-bold">{{ lesson.title }}</h4>
+
+                <div class="form-group">
+                    <label>Link Διαχειριστή / Moderator</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{{ moderator_link }}" readonly id="moderatorLink">
+                        <div class="input-group-append">
+                            <a href="{{ moderator_link }}" target="_blank" class="btn btn-success">Άνοιγμα</a>
+                            <button type="button" class="btn btn-outline-secondary" onclick="copyInput('moderatorLink')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label>Link Συμμετέχοντα / Attendee</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{{ attendee_link }}" readonly id="attendeeLink">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="copyInput('attendeeLink')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'supervisor:lesson_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Πίσω
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock main %}
+
+
+{% block script_new %}
+
+<script>
+function copyInput(id) {
+    const input = document.getElementById(id);
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+</script>
+
+{% endblock script_new %}
