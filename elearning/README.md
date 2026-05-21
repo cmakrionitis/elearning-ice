@@ -35,7 +35,7 @@ env\Scripts\activate
 * Linux / Mac:
 
 ```bash
-source env/bin/activate
+source env/Scripts/activate
 ```
 
 ---
