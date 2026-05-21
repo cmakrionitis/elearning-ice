@@ -30,7 +30,7 @@ cd elearning
 
 ```bash
 env\Scripts\activate
-```
+``` 
 
 * Linux / Mac:
 
