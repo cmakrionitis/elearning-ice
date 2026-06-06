@@ -152,12 +152,17 @@
 
                     <div class="mt-auto">
 
-                        {% if bbb_meeting %}
+                        {% if bbb_meeting_running %}
                             <a href="{% url 'courses:lesson_meeting_user' course.slug %}" 
                             class="btn btn-danger w-100 mb-2" target="_blank">
                                 <i class="bi bi-camera-video"></i>
                                 Είσοδος στο Live Μάθημα
                             </a>
+                        {% else %}
+                            <button class="btn btn-secondary w-100 mb-2" disabled>
+                                <i class="bi bi-camera-video-off"></i>
+                                Το Live Μάθημα δεν έχει ξεκινήσει ακόμα
+                            </button>
                         {% endif %}
 
                         <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-primary w-100">

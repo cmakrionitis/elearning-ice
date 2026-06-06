@@ -327,19 +327,25 @@ def mark_course_section_viewed(request, slug, section_id):
 @author_profile_required
 def lesson_meeting_user(request, lesson_slug):
     lesson = get_object_or_404(Lesson, slug=lesson_slug, is_active=True)
-    meeting = get_object_or_404(BigBlueButtonMeeting, lesson=lesson, is_active=True)
+    meeting = get_object_or_404(
+        BigBlueButtonMeeting,
+        lesson=lesson,
+        is_active=True
+    )
 
-    # Προαιρετικός έλεγχος ότι είναι AuthorProfile
     if not hasattr(request.user, "author_profile"):
         messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το μάθημα.")
         return redirect("login")
 
-    # Προαιρετικός έλεγχος ότι έχει πρόσβαση στο module
     if not request.user.author_profile.lesson_modules.filter(id=lesson.module_id).exists():
         messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το lesson.")
         return redirect("courses:module_list")
 
     bbb = BigBlueButtonService()
+
+    if not bbb.is_meeting_running(meeting.meeting_id):
+        messages.error(request, "Το live μάθημα δεν έχει ξεκινήσει ακόμα.")
+        return redirect("courses:lesson_detail", lesson_slug=lesson.slug)
 
     full_name = request.user.get_full_name() or request.user.username
 

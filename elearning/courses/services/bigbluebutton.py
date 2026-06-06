@@ -45,3 +45,29 @@ class BigBlueButtonService:
         }
 
         return self._url("join", params)
+    
+    def is_meeting_running(self, meeting_id):
+        call_name = "isMeetingRunning"
+
+        params = {
+            "meetingID": meeting_id
+        }
+
+        query_string = urlencode(params)
+        checksum = self._checksum(call_name, query_string)
+
+        url = f"{self.api_url}/{call_name}?{query_string}&checksum={checksum}"
+
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+
+            root = ET.fromstring(response.content)
+
+            returncode = root.findtext("returncode")
+            running = root.findtext("running")
+
+            return returncode == "SUCCESS" and running == "true"
+
+        except Exception:
+            return False

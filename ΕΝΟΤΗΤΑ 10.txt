@@ -1,0 +1,248 @@
+ΕΝΟΤΗΤΑ 10: Διαχείριση Αρχείων (File Handling)
+Θεωρία (αναλυτική):
+Τι είναι η διαχείριση αρχείων;
+Μέχρι τώρα, όσα δεδομένα έδινε ο χρήστης χάνονταν όταν τέλειωνε το πρόγραμμα. Με τα αρχεία, μπορούμε να αποθηκεύσουμε δεδομένα στον δίσκο και να τα διαβάσουμε ξανά αργότερα.
+
+Γιατί χρειαζόμαστε αρχεία;
+
+Αποθήκευση δεδομένων μόνιμα
+
+Επεξεργασία μεγάλου όγκου δεδομένων
+
+Επικοινωνία μεταξύ προγραμμάτων
+
+Δημιουργία αναφορών, βαθμολογιών, αρχείων καταγραφής (logs)
+
+Βασικές συναρτήσεις για αρχεία (από <stdio.h>):
+
+Συνάρτηση	    Τι κάνει
+fopen()	        Ανοίγει ένα αρχείο
+fclose()	    Κλείνει ένα αρχείο
+fprintf()	    Γράφει μορφοποιημένα δεδομένα σε αρχείο
+fscanf()	    Διαβάζει μορφοποιημένα δεδομένα από αρχείο
+fgetc()	        Διαβάζει έναν χαρακτήρα
+fputc()	        Γράφει έναν χαρακτήρα
+fgets()	        Διαβάζει μια γραμμή
+fputs()	        Γράφει μια συμβολοσειρά
+Κατάσταση λειτουργίας (mode) στο fopen:
+
+Mode	    Τι κάνει
+"r"	        read – διαβάζει (το αρχείο ΠΡΕΠΕΙ να υπάρχει)
+"w"	        write – γράφει (αν υπάρχει, το σβήνει/αντίγραφο)
+"a"	        append – προσθέτει στο τέλος του αρχείου
+"r+"	    read/write – διαβάζει και γράφει
+"w+"	    read/write – δημιουργεί νέο ή σβήνει το παλιό
+"a+"	    read/append – διαβάζει και προσθέτει στο τέλος
+
+Παράδειγμα 1 – Γράψιμο σε αρχείο:
+
+c
+#include <stdio.h>
+
+int main() {
+    FILE *file = fopen("students.txt", "w");
+    
+    if (file == NULL) {
+        printf("Αποτυχία ανοίγματος αρχείου!\n");
+        return 1;
+    }
+    
+    fprintf(file, "Μαρία, 20, 8.5\n");
+    fprintf(file, "Γιάννης, 22, 9.2\n");
+    fprintf(file, "Κώστας, 21, 7.8\n");
+    
+    fclose(file);
+    printf("Τα δεδομένα αποθηκεύτηκαν!\n");
+    
+    return 0;
+}
+Παράδειγμα 2 – Διάβασμα από αρχείο:
+
+c
+#include <stdio.h>
+
+int main() {
+    FILE *file = fopen("students.txt", "r");
+    
+    if (file == NULL) {
+        printf("Το αρχείο δεν υπάρχει!\n");
+        return 1;
+    }
+    
+    char name[50];
+    int age;
+    float grade;
+    
+    while (fscanf(file, "%[^,], %d, %f\n", name, &age, &grade) == 3) {
+        printf("Όνομα: %s, Ηλικία: %d, Βαθμός: %.1f\n", name, age, grade);
+    }
+    
+    fclose(file);
+    return 0;
+}
+Επεξήγηση του %[^,]:
+Διαβάζει χαρακτήρες μέχρι να βρει κόμμα.
+
+Παράδειγμα 3 – Γράψιμο δομών (struct) σε αρχείο:
+
+c
+#include <stdio.h>
+
+typedef struct {
+    char name[50];
+    int age;
+    float grade;
+} Student;
+
+int main() {
+    Student students[3] = {
+        {"Μαρία", 20, 8.5},
+        {"Γιάννης", 22, 9.2},
+        {"Κώστας", 21, 7.8}
+    };
+    
+    FILE *file = fopen("students.txt", "w");
+    
+    if (file == NULL) {
+        printf("Αποτυχία!\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < 3; i++) {
+        fprintf(file, "%s, %d, %.2f\n", students[i].name, students[i].age, students[i].grade);
+    }
+    
+    fclose(file);
+    return 0;
+}
+Παράδειγμα 4 – Προσθήκη (append) στο τέλος αρχείου:
+
+c
+#include <stdio.h>
+
+int main() {
+    FILE *file = fopen("students.txt", "a");
+    
+    if (file == NULL) {
+        printf("Αποτυχία!\n");
+        return 1;
+    }
+    
+    fprintf(file, "Ελένη, 19, 9.5\n");
+    
+    fclose(file);
+    return 0;
+}
+Παράδειγμα 5 – Διάβασμα γραμμή-γραμμή με fgets:
+
+c
+#include <stdio.h>
+
+int main() {
+    FILE *file = fopen("students.txt", "r");
+    char line[200];
+    
+    if (file == NULL) {
+        printf("Το αρχείο δεν υπάρχει!\n");
+        return 1;
+    }
+    
+    while (fgets(line, sizeof(line), file) != NULL) {
+        printf("%s", line);
+    }
+    
+    fclose(file);
+    return 0;
+}
+Παράδειγμα 6 – Εγγραφή δυναμικού πίνακα από struct σε αρχείο:
+
+c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char name[50];
+    int age;
+} Student;
+
+int main() {
+    int n;
+    printf("Πόσους φοιτητές θέλεις να καταγράψεις; ");
+    scanf("%d", &n);
+    
+    Student *students = (Student*)malloc(n * sizeof(Student));
+    
+    for (int i = 0; i < n; i++) {
+        printf("Όνομα φοιτητή %d: ", i + 1);
+        scanf("%s", students[i].name);
+        printf("Ηλικία: ");
+        scanf("%d", &students[i].age);
+    }
+    
+    FILE *file = fopen("students.txt", "w");
+    
+    if (file == NULL) {
+        printf("Αποτυχία αποθήκευσης!\n");
+        free(students);
+        return 1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        fprintf(file, "%s, %d\n", students[i].name, students[i].age);
+    }
+    
+    fclose(file);
+    free(students);
+    
+    printf("Τα δεδομένα αποθηκεύτηκαν στο students.txt\n");
+    return 0;
+}
+Σημαντικές παρατηρήσεις:
+
+ΠΑΝΤΑ ελέγχουμε αν το fopen επέστρεψε NULL
+(μπορεί το αρχείο να μην υπάρχει, ή να μην έχουμε δικαιώματα)
+
+ΠΑΝΤΑ κλείνουμε το αρχείο με fclose()
+Αν δεν το κλείσουμε, μπορεί να χαθούν δεδομένα
+
+Διάβασμα με fscanf:
+Προσοχή στις μορφές – αν το αρχείο δεν έχει ακριβώς αυτή τη μορφή, θα διαβάσει λάθος
+
+Τα αρχεία δημιουργούνται στον ίδιο φάκελο με το εκτελέσιμο
+
+fscanf επιστρέφει τον αριθμό των τιμών που διάβασε
+(χρήσιμο για while loop)
+
+Ερωτήσεις πολλαπλής επιλογής (4 ερωτήσεις)
+1. Ποια συνάρτηση ανοίγει ένα αρχείο;
+Α) open()
+Β) fopen()
+Γ) fileopen()
+Δ) fopenfile()
+
+2. Τι σημαίνει το mode "w" στο fopen;
+Α) Διαβάζει από αρχείο
+Β) Γράφει από την αρχή (σβήνει το παλιό)
+Ｃ) Προσθέτει στο τέλος
+Δ) Διαβάζει και γράφει
+
+3. Ποια συνάρτηση κλείνει ένα αρχείο;
+Α) fclose()
+Β) closefile()
+Γ) fileclose()
+Δ) fexit()
+
+4. Τι ελέγχουμε μετά από fopen για να δούμε αν πέτυχε;
+
+c
+FILE *file = fopen("data.txt", "r");
+Α) if (file > 0)
+Β) if (file == NULL)
+Γ) if (file)
+Δ) if (file != 0)
+
+Απαντήσεις Ενότητας 10:
+1.Β
+2.Β
+3.Α
+4.Β
