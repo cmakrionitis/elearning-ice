@@ -15,18 +15,21 @@
     <!--end::Accessibility Meta Tags-->
 
     <!--begin::Primary Meta Tags-->
-    <meta name="title" content="AdminLTE 4 | Login Page" />
-    <meta name="author" content="ColorlibHQ" />
+    <meta name="title" content="Elearning ICE | Εκπαιδευτική Πλατφόρμα" />
+
+    <meta name="author" content="Elearning ICE" />
+
     <meta name="description"
-        content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS. Fully accessible with WCAG 2.1 AA compliance." />
+        content="Η εκπαιδευτική πλατφόρμα Elearning ICE παρέχει διαδικτυακά μαθήματα, θεωρία, τεστ αξιολόγησης, παρακολούθηση προόδου χρηστών και ζωντανή εκπαίδευση μέσω BigBlueButton." />
+
     <meta name="keywords"
-        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard, accessible admin panel, WCAG compliant" />
+        content="elearning, εκπαιδευτική πλατφόρμα, online μαθήματα, θεωρία, τεστ αξιολόγησης, πρόοδος χρηστών, BigBlueButton, live μάθημα, supervisor dashboard, authors, courses, e-learning ICE" />
     <!--end::Primary Meta Tags-->
 
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="{% static 'AdminLte/dist/css/adminlte.min.css' %}" as="style" />
+    <link rel="preload" href="{% static 'AdminLte-3-2-0/dist/css/adminlte.min.css' %}" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -46,7 +49,7 @@
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="{% static 'AdminLte/dist/css/adminlte.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'AdminLte-3-2-0/dist/css/adminlte.min.css' %}" />
     <!--end::Required Plugin(AdminLTE)-->
 </head>
 <!--end::Head-->
@@ -118,10 +121,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         crossorigin="anonymous"></script>
     <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
-    <script src="{% static 'AdminLte/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"
+    <script src="{% static 'AdminLte-3-2-0/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"
         crossorigin="anonymous"></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="{% static 'AdminLte/dist/js/adminlte.min.js' %}"></script>
+    <script src="{% static 'AdminLte-3-2-0/dist/js/adminlte.min.js' %}"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
         const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
