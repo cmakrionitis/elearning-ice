@@ -2,6 +2,23 @@
 {% block title %}Αποτέλεσμα - {{ course.title }}{% endblock %}
 
 {% block content %}
+<style>
+.question-pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #0d6efd;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #111827;
+    margin: 0;
+}
+</style>
 <div class="el-hero mb-4">
     <span class="el-badge mb-3">Αποτέλεσμα</span>
     <h1 class="fw-bold">{{ course.title }}</h1>
@@ -10,20 +27,59 @@
 
 <div class="el-card p-4 mb-4">
     <h3 class="fw-bold mb-3">Σκορ</h3>
-    <p class="mb-2"><strong>Σωστές απαντήσεις:</strong> {{ progress.score }} / {{ progress.total_questions }}</p>
-    <p class="mb-2"><strong>Ποσοστό:</strong> {{ progress.percentage }}%</p>
 
-    {% if progress.score >= 6 %}
+    <p class="mb-2">
+        <strong>Σωστές απαντήσεις:</strong>
+        {{ progress.score }} / {{ progress.total_questions }}
+    </p>
+
+    <p class="mb-3">
+        <strong>Ποσοστό επιτυχίας:</strong>
+        {{ progress.percentage }}%
+    </p>
+
+    <div class="progress mb-3" style="height: 14px; border-radius: 999px;">
+        <div
+            class="progress-bar
+            {% if progress.percentage >= 90 %}
+                bg-success
+            {% elif progress.percentage >= 75 %}
+                bg-primary
+            {% elif progress.percentage >= 60 %}
+                bg-info
+            {% elif progress.percentage >= 40 %}
+                bg-warning
+            {% else %}
+                bg-danger
+            {% endif %}"
+            style="width: {{ progress.percentage }}%;">
+            {{ progress.percentage }}%
+        </div>
+    </div>
+
+    {% if progress.percentage >= 90 %}
         <div class="el-result-good">
-            Πολύ καλή επίδοση. Έχεις κατανοήσει πολύ καλά τη θεωρία.
+            Εξαιρετική επίδοση! Έχεις κατανοήσει άριστα τη θεωρία και μπορείς να προχωρήσεις με μεγάλη σιγουριά.
         </div>
-    {% elif progress.score >= 4 %}
+
+    {% elif progress.percentage >= 75 %}
+        <div class="el-result-good">
+            Πολύ καλή επίδοση. Έχεις κατανοήσει πολύ καλά τη θεωρία, με μικρά μόνο σημεία που μπορείς να ξαναδείς.
+        </div>
+
+    {% elif progress.percentage >= 60 %}
         <div class="el-info-box">
-            Καλή προσπάθεια. Έχεις κατανοήσει σε ικανοποιητικό βαθμό τη θεωρία.
+            Καλή προσπάθεια. Έχεις κατανοήσει τη βασική θεωρία, αλλά καλό είναι να κάνεις μια σύντομη επανάληψη στα σημεία που σε δυσκόλεψαν.
         </div>
+
+    {% elif progress.percentage >= 40 %}
+        <div class="el-info-box">
+            Μέτρια επίδοση. Έχεις κατανοήσει κάποια βασικά σημεία, αλλά χρειάζεται περισσότερη επανάληψη πριν προχωρήσεις.
+        </div>
+
     {% else %}
         <div class="el-result-bad">
-            Χρειάζεται λίγη ακόμη επανάληψη στη θεωρία.
+            Χρειάζεται περισσότερη επανάληψη στη θεωρία. Διάβασε ξανά τις ενότητες και προσπάθησε ξανά το quiz.
         </div>
     {% endif %}
 </div>
@@ -33,7 +89,14 @@
 
     {% for answer in answers %}
         <div class="mb-4 pb-4 border-bottom">
-            <h5 class="fw-bold">{{ forloop.counter }}. {{ answer.question.text }}</h5>
+            <div class="mb-2">
+                <span class="badge bg-primary px-3 py-2">
+                    <i class="fas fa-question-circle me-1"></i>
+                    Ερώτηση {{ forloop.counter }}
+                </span>
+            </div>
+
+            <pre class="question-pre">{{ answer.question.text }}</pre>
 
             <p class="mb-2">
                 <strong>Αποτέλεσμα:</strong>

@@ -80,5 +80,13 @@ urlpatterns = [
         views.supervisor_lesson_meeting_links,
         name="lesson_meeting_links"
     ),
-
+    path("courses/<slug:lesson_slug>/presentation/",
+        views.supervisor_lesson_presentation,
+        name="supervisor_lesson_presentation"
+    ),
+    path(
+        "user-progress/<int:progress_id>/answers/",
+        views.user_progress_answers,
+        name="user_progress_answers"
+    ),
 ]

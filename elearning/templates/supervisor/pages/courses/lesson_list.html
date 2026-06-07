@@ -59,6 +59,13 @@
                   <i class="fas fa-trash"></i>
                 </a>
 
+                <a href="{% url 'supervisor:supervisor_lesson_presentation' lesson.slug %}"
+                  class="btn btn-danger btn-sm"
+                  target="_blank"
+                  title="Παρουσίαση Θεωρίας">
+                    <i class="fas fa-file-powerpoint"></i>
+                </a>
+
                 {% if lesson.bbb_meeting and lesson.bbb_meeting.is_active %}
                   <a href="{% url 'supervisor:lesson_meeting_links' lesson.slug %}" 
                     class="btn btn-info btn-sm"

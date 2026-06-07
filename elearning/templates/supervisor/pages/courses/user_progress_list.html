@@ -27,11 +27,13 @@
                                 <th>Χρήστης</th>
                                 <th>Lesson</th>
                                 <th>Theory</th>
+                                <th>Πρόοδος Θεωρίας</th>
                                 <th>Quiz</th>
                                 <th>Score</th>
                                 <th>Σύνολο</th>
                                 <th>%</th>
                                 <th>Τελευταία Προσπάθεια</th>
+                                <th>Απαντήσεις</th>
                             </tr>
                         </thead>
 
@@ -54,6 +56,40 @@
                                     {% else %}
                                     <span class="badge badge-secondary">Όχι</span>
                                     {% endif %}
+                                </td>
+                                
+                                <td style="min-width: 190px;">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted">
+                                            {{ p.viewed_theory_sections }}/{{ p.total_theory_sections }} ενότητες
+                                        </small>
+
+                                        {% if p.theory_percent >= 80 %}
+                                            <span class="badge badge-success">{{ p.theory_percent }}%</span>
+                                        {% elif p.theory_percent >= 50 %}
+                                            <span class="badge badge-warning">{{ p.theory_percent }}%</span>
+                                        {% elif p.theory_percent > 0 %}
+                                            <span class="badge badge-info">{{ p.theory_percent }}%</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">0%</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="progress" style="height: 8px; border-radius: 999px;">
+                                        <div
+                                            class="progress-bar
+                                            {% if p.theory_percent >= 80 %}
+                                                bg-success
+                                            {% elif p.theory_percent >= 50 %}
+                                                bg-warning
+                                            {% elif p.theory_percent > 0 %}
+                                                bg-info
+                                            {% else %}
+                                                bg-secondary
+                                            {% endif %}"
+                                            style="width: {{ p.theory_percent }}%;">
+                                        </div>
+                                    </div>
                                 </td>
 
                                 <td>
@@ -91,11 +127,25 @@
                                     -
                                     {% endif %}
                                 </td>
-
+                                <td>
+                                    {% if p.quiz_completed %}
+                                        <a href="{% url 'supervisor:user_progress_answers' p.id %}"
+                                        class="btn btn-primary btn-sm"
+                                        title="Προβολή απαντήσεων">
+                                            <i class="fas fa-eye"></i>
+                                            Απαντήσεις
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            <i class="fas fa-lock"></i>
+                                            Δεν ολοκληρώθηκε
+                                        </button>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="9" class="text-center">
+                                <td colspan="11" class="text-center">
                                     Δεν υπάρχουν δεδομένα προόδου
                                 </td>
                             </tr>

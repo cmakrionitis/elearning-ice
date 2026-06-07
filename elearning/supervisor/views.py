@@ -4,6 +4,8 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.utils.text import slugify
 from datetime import timedelta
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,6 +14,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template.loader import render_to_string
+from django.db.models import Count
 from django.http import HttpResponseForbidden, JsonResponse
 
 from courses.services.bigbluebutton import BigBlueButtonService
@@ -23,8 +26,26 @@ from account.forms import AuthorProfileSupervisorForm, AuthorPasswordChangeForm,
 from account.models import AuthorProfile
 from courses.models import (
     BigBlueButtonMeeting, LessonModule, Lesson, TheorySection,
-    Question, AnswerOption, UserLessonProgress, UserAnswer
+    Question, AnswerOption, UserLessonProgress, UserAnswer, UserLessonSectionProgress
 )
+
+User = get_user_model()
+
+
+def generate_unique_username(first_name, last_name):
+    base_username = slugify(f"{first_name}-{last_name}", allow_unicode=True)
+
+    if not base_username:
+        base_username = "author"
+
+    username = base_username
+    counter = 1
+
+    while User.objects.filter(username=username).exists():
+        username = f"{base_username}-{counter}"
+        counter += 1
+
+    return username
 
 
 # Create your views here.
@@ -68,7 +89,16 @@ def dashboard(request):
     quick_author_form = QuickAuthorCreateForm()
 
     if request.method == 'POST' and request.POST.get('form_type') == 'quick_author_create':
-        quick_author_form = QuickAuthorCreateForm(request.POST)
+        post_data = request.POST.copy()
+
+        first_name = post_data.get("first_name", "").strip()
+        last_name = post_data.get("last_name", "").strip()
+
+        username = generate_unique_username(first_name, last_name)
+
+        post_data["username"] = username
+
+        quick_author_form = QuickAuthorCreateForm(post_data)
 
         if quick_author_form.is_valid():
             author = quick_author_form.save()
@@ -825,8 +855,42 @@ def answer_option_delete(request, pk):
 
 @login_required
 @user_passes_test(is_supervisor)
+@login_required
 def user_progress_list(request):
-    progress_list = UserLessonProgress.objects.select_related('user', 'lesson').all()
+    progress_list = list(
+        UserLessonProgress.objects
+        .select_related('user', 'lesson')
+        .prefetch_related('lesson__theory_sections')
+        .all()
+        .order_by('-id')
+    )
+
+    viewed_sections_map = {
+        (item["user_id"], item["lesson_id"]): item["total"]
+        for item in UserLessonSectionProgress.objects.filter(
+            viewed=True
+        )
+        .values("user_id", "lesson_id")
+        .annotate(total=Count("section_id", distinct=True))
+    }
+
+    for p in progress_list:
+        total_sections = p.lesson.theory_sections.count()
+
+        viewed_sections = viewed_sections_map.get(
+            (p.user_id, p.lesson_id),
+            0
+        )
+
+        theory_percent = 0
+
+        if total_sections > 0:
+            theory_percent = round((viewed_sections / total_sections) * 100)
+
+        p.total_theory_sections = total_sections
+        p.viewed_theory_sections = viewed_sections
+        p.theory_percent = theory_percent
+
     return render(request, 'supervisor/pages/courses/user_progress_list.html', {
         'progress_list': progress_list
     })
@@ -925,6 +989,57 @@ def supervisor_create_lesson_meeting(request, lesson_slug):
         messages.info(request, "Το meeting υπήρχε ήδη και ενεργοποιήθηκε ξανά.")
 
     return redirect("supervisor:lesson_meeting_links", lesson_slug=lesson.slug)
+
+@login_required
+@user_passes_test(is_supervisor)
+def supervisor_lesson_presentation(request, lesson_slug):
+    lesson = get_object_or_404(
+        Lesson.objects.prefetch_related("theory_sections"),
+        slug=lesson_slug,
+        is_active=True
+    )
+
+    sections = lesson.theory_sections.all()
+
+    return render(request, "supervisor/pages/courses/lesson_presentation.html", {
+        "lesson": lesson,
+        "sections": sections,
+    })
+
+@login_required
+@user_passes_test(is_supervisor)
+def user_progress_answers(request, progress_id):
+    progress = get_object_or_404(
+        UserLessonProgress.objects.select_related("user", "lesson"),
+        id=progress_id
+    )
+
+    if not progress.quiz_completed:
+        messages.error(request, "Ο χρήστης δεν έχει ολοκληρώσει ακόμα το τεστ.")
+        return redirect("supervisor:user_progress_list")
+
+    answers = (
+        UserAnswer.objects
+        .filter(
+        user=progress.user,
+        lesson=progress.lesson
+        )
+        .select_related(
+            "user",
+            "lesson",
+            "question"
+        )
+        .prefetch_related(
+            "selected_options",
+            "question__options"
+        )
+        .order_by("question_id")
+        )
+
+    return render(request, "supervisor/pages/courses/user_progress_answers.html", {
+        "progress": progress,
+        "answers": answers,
+    })
 
 @login_required
 @user_passes_test(is_supervisor)

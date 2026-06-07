@@ -2,6 +2,8 @@
 {% block title %}Τεστ - {{ course.title }}{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 .el-back-btn {
     display: inline-flex;
@@ -29,6 +31,112 @@
 .el-back-btn:hover i {
     transform: translateX(-3px);
 }
+.question-pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #0d6efd;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #111827;
+    margin: 0;
+}
+.answers-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #0d6efd;
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.answers-section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.answers-section-heading {
+    font-weight: 800;
+    font-size: 17px;
+    color: #111827;
+}
+
+.answers-section-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+.option-pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #198754;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #111827;
+    margin: 0;
+    cursor: pointer;
+}
+.form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.form-check:hover {
+    background: #f8fafc;
+    border-color: #0d6efd;
+    box-shadow: 0 8px 22px rgba(13, 110, 253, 0.08);
+}
+
+.form-check-input {
+    width: 22px;
+    height: 22px;
+    margin-top: 12px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid #94a3b8;
+    box-shadow: none;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.form-check-label {
+    cursor: pointer;
+    flex: 1;
+}
 </style>
 {% endblock %}
 
@@ -55,11 +163,33 @@
 
     {% for question in questions %}
         <div class="el-question">
-            <h5 class="fw-bold mb-3">
-                Ερώτηση {{ forloop.counter }}: {{ question.text }}
-            </h5>
+            <div class="mb-2">
+                <span class="badge bg-primary px-3 py-2">
+                    <i class="fas fa-question-circle me-1"></i>
+                    Ερώτηση {{ forloop.counter }}
+                </span>
+            </div>
+
+            <pre class="question-pre">{{ question.text }}</pre>
+
+            <br>
 
             {% if question.question_type == 'single' or question.question_type == 'true_false' %}
+                <div class="answers-section-title mt-4 mb-3">
+                    <div class="answers-section-icon">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+
+                    <div>
+                        <div class="answers-section-heading">
+                            Απαντήσεις
+                        </div>
+
+                        <div class="answers-section-subtitle">
+                            Επίλεξε μία απάντηση.
+                        </div>
+                    </div>
+                </div>
                 {% for option in question.options.all %}
                     <div class="form-check mb-2">
                         <input class="form-check-input"
@@ -68,12 +198,27 @@
                                value="{{ option.id }}"
                                id="option_{{ option.id }}"
                                required>
-                        <label class="form-check-label" for="option_{{ option.id }}">
-                            {{ option.text }}
+                        <label class="form-check-label w-100" for="option_{{ option.id }}">
+                            <pre class="option-pre">{{ option.text }}</pre>
                         </label>
                     </div>
                 {% endfor %}
             {% elif question.question_type == 'multiple' %}
+                <div class="answers-section-title mt-4 mb-3">
+                    <div class="answers-section-icon">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+
+                    <div>
+                        <div class="answers-section-heading">
+                            Απαντήσεις
+                        </div>
+
+                        <div class="answers-section-subtitle">
+                            Επίλεξε μία ή περισσότερες απαντήσεις.
+                        </div>
+                    </div>
+                </div>    
                 {% for option in question.options.all %}
                     <div class="form-check mb-2">
                         <input class="form-check-input"
@@ -81,8 +226,8 @@
                                name="question_{{ question.id }}"
                                value="{{ option.id }}"
                                id="option_{{ option.id }}">
-                        <label class="form-check-label" for="option_{{ option.id }}">
-                            {{ option.text }}
+                        <label class="form-check-label w-100" for="option_{{ option.id }}">
+                            <pre class="option-pre">{{ option.text }}</pre>
                         </label>
                     </div>
                 {% endfor %}
