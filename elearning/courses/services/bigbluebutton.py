@@ -2,6 +2,8 @@ import hashlib
 import requests
 from urllib.parse import urlencode
 from django.conf import settings
+import requests
+import xml.etree.ElementTree as ET
 
 
 class BigBlueButtonService:
@@ -47,19 +49,21 @@ class BigBlueButtonService:
         return self._url("join", params)
     
     def is_meeting_running(self, meeting_id):
-        call_name = "isMeetingRunning"
+        action = "isMeetingRunning"
 
         params = {
             "meetingID": meeting_id
         }
 
-        query_string = urlencode(params)
-        checksum = self._checksum(call_name, query_string)
-
-        url = f"{self.api_url}/{call_name}?{query_string}&checksum={checksum}"
+        url = self._url(action, params)
 
         try:
             response = requests.get(url, timeout=5)
+
+            print("BBB URL:", url)
+            print("BBB STATUS:", response.status_code)
+            print("BBB RESPONSE:", response.text)
+
             response.raise_for_status()
 
             root = ET.fromstring(response.content)
@@ -69,5 +73,6 @@ class BigBlueButtonService:
 
             return returncode == "SUCCESS" and running == "true"
 
-        except Exception:
+        except Exception as e:
+            print("BBB isMeetingRunning ERROR:", e)
             return False

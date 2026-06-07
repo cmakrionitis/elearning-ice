@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.contrib import messages
 from django.utils import timezone
 
@@ -22,16 +23,33 @@ def get_user_allowed_modules(user):
 def course_list(request):
     allowed_modules = get_user_allowed_modules(request.user)
 
-    courses = Lesson.objects.filter(
-        is_active=True,
-        module__in=allowed_modules
-    ).select_related(
-        'module'
-    ).distinct()
+    courses = list(
+        Lesson.objects.filter(
+            is_active=True,
+            module__in=allowed_modules
+        )
+        .select_related('module')
+        .prefetch_related('theory_sections')
+        .distinct()
+    )
 
     progress_map = {
         p.lesson_id: p
-        for p in UserLessonProgress.objects.filter(user=request.user)
+        for p in UserLessonProgress.objects.filter(
+            user=request.user,
+            lesson__in=courses
+        )
+    }
+
+    viewed_sections_map = {
+        item["lesson_id"]: item["total"]
+        for item in UserLessonSectionProgress.objects.filter(
+            user=request.user,
+            lesson__in=courses,
+            viewed=True
+        )
+        .values("lesson_id")
+        .annotate(total=Count("section_id", distinct=True))
     }
 
     bbb_meeting_map = {
@@ -42,10 +60,44 @@ def course_list(request):
         )
     }
 
+    bbb = BigBlueButtonService()
+
+    for course in courses:
+        progress = progress_map.get(course.id)
+
+        total_sections = course.theory_sections.count()
+        viewed_count = viewed_sections_map.get(course.id, 0)
+
+        theory_progress_percent = 0
+
+        if total_sections > 0:
+            theory_progress_percent = round((viewed_count / total_sections) * 80)
+
+        final_progress_percent = theory_progress_percent
+
+        if progress and progress.quiz_completed:
+            final_progress_percent = 100
+        elif progress and progress.theory_completed:
+            final_progress_percent = max(theory_progress_percent, 80)
+
+        course.progress = progress
+        course.total_sections = total_sections
+        course.viewed_count = viewed_count
+        course.theory_progress_percent = theory_progress_percent
+        course.progress_percent = final_progress_percent
+
+        bbb_meeting = bbb_meeting_map.get(course.id)
+
+        course.bbb_meeting = bbb_meeting
+        course.bbb_meeting_running = False
+
+        if bbb_meeting:
+            course.bbb_meeting_running = bbb.is_meeting_running(
+                bbb_meeting.meeting_id
+            )
+
     return render(request, 'courses/pages/course_list.html', {
         'courses': courses,
-        'progress_map': progress_map,
-        'bbb_meeting_map': bbb_meeting_map,
     })
 
 
@@ -327,25 +379,19 @@ def mark_course_section_viewed(request, slug, section_id):
 @author_profile_required
 def lesson_meeting_user(request, lesson_slug):
     lesson = get_object_or_404(Lesson, slug=lesson_slug, is_active=True)
-    meeting = get_object_or_404(
-        BigBlueButtonMeeting,
-        lesson=lesson,
-        is_active=True
-    )
+    meeting = get_object_or_404(BigBlueButtonMeeting, lesson=lesson, is_active=True)
 
+    # Προαιρετικός έλεγχος ότι είναι AuthorProfile
     if not hasattr(request.user, "author_profile"):
         messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το μάθημα.")
         return redirect("login")
 
+    # Προαιρετικός έλεγχος ότι έχει πρόσβαση στο module
     if not request.user.author_profile.lesson_modules.filter(id=lesson.module_id).exists():
         messages.error(request, "Δεν έχετε πρόσβαση σε αυτό το lesson.")
         return redirect("courses:module_list")
 
     bbb = BigBlueButtonService()
-
-    if not bbb.is_meeting_running(meeting.meeting_id):
-        messages.error(request, "Το live μάθημα δεν έχει ξεκινήσει ακόμα.")
-        return redirect("courses:lesson_detail", lesson_slug=lesson.slug)
 
     full_name = request.user.get_full_name() or request.user.username
 

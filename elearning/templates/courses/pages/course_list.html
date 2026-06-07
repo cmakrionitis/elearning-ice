@@ -7,13 +7,12 @@
     <span class="el-badge mb-3">Εκπαιδευτική Πλατφόρμα</span>
     <h1 class="fw-bold">Διαθέσιμα Μαθήματα</h1>
     <p class="mb-0">
-        Επίλεξε ένα μάθημα, διάβασε τη θεωρία και ολοκλήρωσε το τεστ των 7 ερωτήσεων.
+        Επίλεξε ένα μάθημα, διάβασε τη θεωρία και ολοκλήρωσε το τεστ.
     </p>
 </div>
 
 <div class="row g-4">
     {% for course in courses %}
-        {% with progress=progress_map|get_item:course.id bbb_meeting=bbb_meeting_map|get_item:course.id %}
         <div class="col-md-6 col-lg-4">
             <div class="el-course-card h-100 d-flex flex-column">
                 {% if course.hero_image %}
@@ -28,142 +27,147 @@
                         {{ course.short_description|default:course.description|truncatechars:130 }}
                     </p>
 
-                    {% if progress %}
-                        <div class="mb-3">
-                            {% if progress.quiz_completed %}
-                                <div class="d-flex justify-content-between small mb-2">
-                                    <span>Πρόοδος</span>
-                                    <span class="fw-bold text-success">100%</span>
-                                </div>
-                                <div class="progress" style="height: 12px; border-radius: 999px;">
-                                    <div class="progress-bar bg-success" style="width: 100%;">
-                                        100%
-                                    </div>
-                                </div>
-                            {% elif progress.theory_completed %}
-                                <div class="d-flex justify-content-between small mb-2">
-                                    <span>Πρόοδος</span>
-                                    <span class="fw-bold text-primary">50%</span>
-                                </div>
-                                <div class="progress" style="height: 12px; border-radius: 999px;">
-                                    <div class="progress-bar bg-primary" style="width: 50%;">
-                                        50%
-                                    </div>
-                                </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span>Πρόοδος</span>
+
+                            {% if course.progress and course.progress.quiz_completed %}
+                                <span class="fw-bold text-success">{{ course.progress_percent }}%</span>
+                            {% elif course.progress and course.progress.theory_completed %}
+                                <span class="fw-bold text-primary">{{ course.progress_percent }}%</span>
+                            {% elif course.progress_percent > 0 %}
+                                <span class="fw-bold text-info">{{ course.progress_percent }}%</span>
                             {% else %}
-                                <div class="d-flex justify-content-between small mb-2">
-                                    <span>Πρόοδος</span>
-                                    <span class="fw-bold text-secondary">0%</span>
-                                </div>
-                                <div class="progress" style="height: 12px; border-radius: 999px;">
-                                    <div class="progress-bar bg-secondary" style="width: 0%;">
-                                        0%
-                                    </div>
-                                </div>
+                                <span class="fw-bold text-secondary">0%</span>
                             {% endif %}
                         </div>
 
-                        <!-- Card Ιστορικού / Κατάστασης -->
-                        <div class="card border-0 shadow-sm mb-3" style="border-radius: 16px; background: #f8fafc;">
-                            <div class="card-body p-3">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h6 class="mb-0 fw-bold">Κατάσταση μαθήματος</h6>
+                        <div class="progress" style="height: 12px; border-radius: 999px;">
+                            <div class="
+                                progress-bar
+                                {% if course.progress and course.progress.quiz_completed %}
+                                    bg-success
+                                {% elif course.progress and course.progress.theory_completed %}
+                                    bg-primary
+                                {% elif course.progress_percent > 0 %}
+                                    bg-info
+                                {% else %}
+                                    bg-secondary
+                                {% endif %}
+                            "
+                            style="width: {{ course.progress_percent }}%;">
+                                {{ course.progress_percent }}%
+                            </div>
+                        </div>
 
-                                    {% if progress.quiz_completed %}
-                                        <span class="badge bg-success">Ολοκληρώθηκε</span>
-                                    {% elif progress.theory_completed %}
-                                        <span class="badge bg-primary">Θεωρία έτοιμη</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">Δεν ξεκίνησε</span>
-                                    {% endif %}
-                                </div>
+                        {% if course.total_sections > 0 %}
+                            <div class="small text-muted mt-1">
+                                Θεωρία: {{ course.viewed_count }}/{{ course.total_sections }} ενότητες
+                            </div>
+                        {% endif %}
+                    </div>
 
-                                <ul class="list-unstyled mb-0 small">
-                                    {% if progress.theory_completed %}
-                                        <li class="mb-2 d-flex align-items-start">
-                                            <i class="bi bi-book text-primary me-2 mt-1"></i>
-                                            <div>
-                                                <strong>Η θεωρία διαβάστηκε</strong>
-                                                {% if progress.theory_completed_at %}
-                                                    <div class="text-muted">
-                                                        {{ progress.theory_completed_at|date:"d/m/Y H:i" }}
-                                                    </div>
+                    <div class="card border-0 shadow-sm mb-3" style="border-radius: 16px; background: #f8fafc;">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="mb-0 fw-bold">Κατάσταση μαθήματος</h6>
+
+                                {% if course.progress and course.progress.quiz_completed %}
+                                    <span class="badge bg-success">Ολοκληρώθηκε</span>
+                                {% elif course.progress and course.progress.theory_completed %}
+                                    <span class="badge bg-primary">Θεωρία έτοιμη</span>
+                                {% elif course.progress_percent > 0 %}
+                                    <span class="badge bg-info">Σε εξέλιξη</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Δεν ξεκίνησε</span>
+                                {% endif %}
+                            </div>
+
+                            <ul class="list-unstyled mb-0 small">
+                                {% if course.progress and course.progress.theory_completed %}
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-book text-primary me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Η θεωρία διαβάστηκε</strong>
+                                            {% if course.progress.theory_completed_at %}
+                                                <div class="text-muted">
+                                                    {{ course.progress.theory_completed_at|date:"d/m/Y H:i" }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                {% elif course.progress_percent > 0 %}
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-book-half text-info me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Η θεωρία είναι σε εξέλιξη</strong>
+                                            <div class="text-muted">
+                                                Έχουν διαβαστεί {{ course.viewed_count }} από {{ course.total_sections }} ενότητες.
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-book text-secondary me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Η θεωρία δεν έχει ξεκινήσει ακόμη</strong>
+                                        </div>
+                                    </li>
+                                {% endif %}
+
+                                {% if course.progress and course.progress.quiz_completed %}
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-patch-check text-success me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Το τεστ ολοκληρώθηκε</strong>
+                                            <div class="text-muted">
+                                                Σκορ: {{ course.progress.score }}/{{ course.progress.total_questions }}
+                                                {% if course.progress.percentage %}
+                                                    • {{ course.progress.percentage }}%
                                                 {% endif %}
                                             </div>
-                                        </li>
-                                    {% else %}
-                                        <li class="mb-2 d-flex align-items-start">
-                                            <i class="bi bi-book text-secondary me-2 mt-1"></i>
-                                            <div>
-                                                <strong>Η θεωρία δεν έχει ολοκληρωθεί ακόμη</strong>
-                                            </div>
-                                        </li>
-                                    {% endif %}
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-ui-checks text-secondary me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Το τεστ δεν έχει ολοκληρωθεί ακόμη</strong>
+                                        </div>
+                                    </li>
+                                {% endif %}
 
-                                    {% if progress.quiz_completed %}
-                                        <li class="mb-2 d-flex align-items-start">
-                                            <i class="bi bi-patch-check text-success me-2 mt-1"></i>
-                                            <div>
-                                                <strong>Το τεστ ολοκληρώθηκε</strong>
-                                                <div class="text-muted">
-                                                    Σκορ: {{ progress.score }}/{{ progress.total_questions }}
-                                                    {% if progress.percentage %}
-                                                        • {{ progress.percentage }}%
-                                                    {% endif %}
-                                                </div>
+                                {% if course.progress and course.progress.last_attempt_at %}
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-clock-history text-info me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Τελευταία ενέργεια</strong>
+                                            <div class="text-muted">
+                                                {{ course.progress.last_attempt_at|date:"d/m/Y H:i" }}
                                             </div>
-                                        </li>
-                                    {% else %}
-                                        <li class="mb-2 d-flex align-items-start">
-                                            <i class="bi bi-ui-checks text-secondary me-2 mt-1"></i>
-                                            <div>
-                                                <strong>Το τεστ δεν έχει ολοκληρωθεί ακόμη</strong>
-                                            </div>
-                                        </li>
-                                    {% endif %}
-
-                                    {% if progress.last_attempt_at %}
-                                        <li class="d-flex align-items-start">
-                                            <i class="bi bi-clock-history text-info me-2 mt-1"></i>
-                                            <div>
-                                                <strong>Τελευταία ενέργεια</strong>
-                                                <div class="text-muted">
-                                                    {{ progress.last_attempt_at|date:"d/m/Y H:i" }}
-                                                </div>
-                                            </div>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            </ul>
                         </div>
-                    {% else %}
-                        <div class="card border-0 shadow-sm mb-3" style="border-radius: 16px; background: #f8fafc;">
-                            <div class="card-body p-3">
-                                <h6 class="mb-2 fw-bold">Κατάσταση μαθήματος</h6>
-                                <div class="d-flex align-items-start small">
-                                    <i class="bi bi-info-circle text-secondary me-2 mt-1"></i>
-                                    <div class="text-muted">
-                                        Δεν υπάρχει ακόμη πρόοδος για αυτό το μάθημα.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
+                    </div>
 
                     <div class="mt-auto">
 
-                        {% if bbb_meeting_running %}
-                            <a href="{% url 'courses:lesson_meeting_user' course.slug %}" 
-                            class="btn btn-danger w-100 mb-2" target="_blank">
+                        {% if course.bbb_meeting_running %}
+                            <a href="{% url 'courses:lesson_meeting_user' course.slug %}"
+                            class="btn btn-danger w-100 mb-2"
+                            onclick="openBBBWindow(event, this.href, 'bbb_live_{{ course.id }}')">
                                 <i class="bi bi-camera-video"></i>
                                 Είσοδος στο Live Μάθημα
                             </a>
-                        {% else %}
+                        {% elif course.bbb_meeting %}
                             <button class="btn btn-secondary w-100 mb-2" disabled>
                                 <i class="bi bi-camera-video-off"></i>
                                 Το Live Μάθημα δεν έχει ξεκινήσει ακόμα
                             </button>
                         {% endif %}
+                        
 
                         <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-primary w-100">
                             Προβολή μαθήματος
@@ -172,11 +176,41 @@
                 </div>
             </div>
         </div>
-        {% endwith %}
     {% empty %}
         <div class="col-12">
             <div class="alert alert-info">Δεν υπάρχουν διαθέσιμα μαθήματα.</div>
         </div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function openBBBWindow(event, url, windowName) {
+    event.preventDefault();
+
+    // Μέγεθος παραθύρου BBB
+    const width = 520;
+    const height = 420;
+
+    // Θέση κάτω δεξιά
+    const left = screen.availLeft + screen.availWidth - width;
+    const top = screen.availTop + screen.availHeight - height;
+
+    const bbbWindow = window.open(
+        url,
+        windowName,
+        'width=' + width +
+        ',height=' + height +
+        ',left=' + left +
+        ',top=' + top +
+        ',resizable=yes,scrollbars=yes,status=yes'
+    );
+
+    if (bbbWindow) {
+        bbbWindow.focus();
+    } else {
+        window.open(url, '_blank');
+    }
+}
+</script>
 {% endblock %}
