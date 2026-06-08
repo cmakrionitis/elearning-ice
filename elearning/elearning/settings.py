@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-p3#=y%(@+-73ds*c78fg=wb*nbl#qa6@f^4d+4ga_y$$p&)w=m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','elearning-ice.onrender.com','elearning-ice-1.onrender.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','elearning-ice.onrender.com','elearning-ice-1.onrender.com','elearning-ice-uniwa.onrender.com']
 
 
 # Application definition
