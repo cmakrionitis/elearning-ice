@@ -2,11 +2,75 @@
 {% block title %}Σύνδεση{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center align-items-start g-4">
+
+    <div class="col-lg-6">
+        <div class="el-card p-4 h-100">
+            <div class="mb-3">
+                <span class="badge bg-primary mb-3">Πληροφορίες Εφαρμογής</span>
+                <h3 class="fw-bold mb-3">Εκπαίδευση από Απόσταση</h3>
+            </div>
+
+            <p class="text-muted" style="line-height: 1.8;">
+                Η εφαρμογή βασίζεται στη θεματική της Εκπαίδευσης από Απόσταση, η οποία
+                αποτελεί μορφή εκπαίδευσης όπου η εκπαιδευτική και μαθησιακή διαδικασία
+                πραγματοποιούνται σε διαφορετικό τόπο ή χρόνο. Η μάθηση υποστηρίζεται
+                μέσα από την αλληλεπίδραση διδάσκοντα και εκπαιδευόμενου, με χρήση
+                τεχνολογικών μέσων.
+            </p>
+
+            <div class="p-3 rounded mb-3" style="background:#f8fafc; border-left:4px solid #0d6efd;">
+                <h5 class="fw-bold mb-2">Ορισμός Moore</h5>
+                <p class="mb-0 text-muted" style="line-height: 1.7;">
+                    Σύμφωνα με τον Michael Moore, η εκπαίδευση από απόσταση αφορά την
+                    παροχή διδασκαλίας μέσω έντυπου υλικού ή ηλεκτρονικών μέσων
+                    επικοινωνίας σε άτομα που συμμετέχουν σε οργανωμένη μάθηση και
+                    βρίσκονται σε διαφορετικό τόπο ή χρόνο από τους διδάσκοντες.
+                </p>
+            </div>
+
+            <p class="text-muted mb-3" style="line-height: 1.8;">
+                Η ενότητα παρουσιάζει επίσης την εξέλιξη της Εκπαίδευσης από Απόσταση,
+                τον ρόλο των ψηφιακών τεχνολογιών, τη διαδραστική απόσταση, την
+                ανατροφοδότηση και τον ρόλο του διδάσκοντα στο σύγχρονο περιβάλλον
+                ηλεκτρονικής μάθησης.
+            </p>
+
+            <hr>
+
+            <div>
+                <h5 class="fw-bold mb-3">Στοιχεία Εργασίας</h5>
+
+                <p class="mb-2">
+                    <strong>Μάθημα:</strong> ΗΛΕΚΤΡΟΝΙΚΗ ΜΑΘΗΣΗ
+                </p>
+                <p class="mb-2">
+                    <strong>Καθηγητής:</strong> ΠΑΝΑΓΙΩΤΗΣ ΑΡΓΥΡΑΚΗΣ
+                </p>
+
+                <p class="mb-1"><strong>Κατασκευαστές:</strong></p>
+                <ul class="mb-0 text-muted">
+                    <li>Μακρυωνίτης Χρήστος — Α.Μ. ice21390298</li>
+                    <li>Χριστόφορος Τυρροπάνης — Α.Μ. ice22390241</li>
+                    <li>Χρήστος Μάτας — Α.Μ. ice22390311</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
     <div class="col-lg-5">
         <div class="el-card p-4">
-            <h2 class="fw-bold mb-3">Σύνδεση</h2>
-            <p class="text-muted mb-4">Συνδεθείτε για να δείτε τη θεωρία και να κάνετε το τεστ.</p>
+            <div class="text-center mb-4">
+                <img src="{% static 'AdminLte-3-2-0/dist/img/AdminLTELogo.png' %}"
+                    alt="Logo"
+                    style="max-width: 110px; height: auto;">
+            </div>
+
+            <h2 class="fw-bold mb-3 text-center">Σύνδεση</h2>
+            <p class="text-muted mb-4 text-center">
+                Συνδεθείτε για να δείτε τη θεωρία και να κάνετε το τεστ.
+            </p>
 
             <form method="post">
                 {% csrf_token %}
