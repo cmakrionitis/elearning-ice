@@ -31,8 +31,10 @@ urlpatterns = [
     path('accounts/logout/', views_account.author_logout, name='logout'),
     path('elearning/', include('courses.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root':settings.STATIC_ROOT}),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 if settings.DEBUG:
