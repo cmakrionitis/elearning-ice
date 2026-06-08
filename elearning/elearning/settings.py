@@ -132,7 +132,7 @@ STATICFILES_DIRS = [
     '/opt/render/project/src/elearning/static'
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 MEDIA_URL = '/media/'
