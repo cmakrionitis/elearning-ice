@@ -40,7 +40,7 @@ source env/Scripts/activate
 
 ---
 
-## 📦 Εγκατάσταση Requirements
+## Εγκατάσταση Requirements
 
 ```bash
 pip install -r requirements.txt
@@ -48,7 +48,7 @@ pip install -r requirements.txt
 
 ---
 
-## 🗄️ Database Setup
+## Database Setup
 
 ```bash
 python manage.py makemigrations
@@ -60,7 +60,7 @@ python manage.py migrate
 
 ---
 
-## 👤 Δημιουργία Superuser
+## Δημιουργία Superuser
 
 ```bash
 python manage.py createsuperuser
@@ -68,7 +68,7 @@ python manage.py createsuperuser
 
 ---
 
-## ▶️ Εκκίνηση Server
+## Εκκίνηση Server
 
 ```bash
 python manage.py runserver
@@ -80,7 +80,7 @@ python -m pip install <package>
 ```
 
 Το project θα τρέχει στο:
-👉 http://127.0.0.1:8000/
+http://127.0.0.1:8000/
 
 ---
 
@@ -106,7 +106,7 @@ Create New User: Login as Admin ([http://127.0.0.1:8000/supervisor/login/](http:
 
 ---
 
-## 📁 Δομή Project (ενδεικτικά)
+## Δομή Project (ενδεικτικά)
 
 ```
 project/
@@ -119,7 +119,7 @@ project/
 
 ---
 
-## ✅ Tips
+## Tips
 
 * Μην ανεβάζεις το `.env` στο GitHub (βάλε το στο `.gitignore`)
 * Χρησιμοποίησε διαφορετικά env για production
@@ -127,7 +127,7 @@ project/
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License.
 
