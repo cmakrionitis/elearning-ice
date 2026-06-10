@@ -479,7 +479,7 @@ def module_create(request):
 
     return render(request, 'supervisor/pages/courses/module_form.html', {
         'form': form,
-        'page_title': 'Δημιουργία Module'
+        'page_title': 'Δημιουργία Θεματικής Ενότητας'
     })
 
 @login_required

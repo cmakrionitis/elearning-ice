@@ -9,23 +9,20 @@
     <span class="brand-text font-weight-light">{{ sitefront.site_name_sort|default:'My Website' }}</span>
   </a>
 
-  <!-- Sidebar -->
   <div class="sidebar">
-    <!-- Sidebar user panel (optional) -->
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
       <div class="image">
         <img src="{% static 'AdminLte-3-2-0/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2"
-          alt="User Image">
+          alt="Εικόνα Χρήστη">
       </div>
       <div class="info">
         <a href="#" class="d-block">{{ request.user.username }}</a>
       </div>
     </div>
 
-    <!-- SidebarSearch Form -->
     <div class="form-inline">
       <div class="input-group" data-widget="sidebar-search">
-        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control form-control-sidebar" type="search" placeholder="Αναζήτηση" aria-label="Αναζήτηση">
         <div class="input-group-append">
           <button class="btn btn-sidebar">
             <i class="fas fa-search fa-fw"></i>
@@ -34,18 +31,14 @@
       </div>
     </div>
 
-    <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-        <!-- Dashboard -->
-        <li
-          class="nav-item {% if request.resolver_match.url_name in 'supervisor_dashboard profile supervisor_sitefront_settings' %}menu-open{% endif %}">
-          <a href="#"
-            class="nav-link {% if request.resolver_match.url_name in 'supervisor_dashboard profile supervisor_sitefront_settings' %}active{% endif %}">
+        <li class="nav-item {% if request.resolver_match.url_name in 'supervisor_dashboard profile supervisor_sitefront_settings' %}menu-open{% endif %}">
+          <a href="#" class="nav-link {% if request.resolver_match.url_name in 'supervisor_dashboard profile supervisor_sitefront_settings' %}active{% endif %}">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
-              Dashboard
+              Πίνακας Ελέγχου
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
@@ -54,27 +47,24 @@
               <a href="{% url 'supervisor:supervisor_dashboard' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'supervisor_dashboard' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Home</p>
+                <p>Αρχική Σελίδα</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'supervisor:profile' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Profile</p>
+                <p>Το Προφίλ μου</p>
               </a>
             </li>
           </ul>
         </li>
 
-        <!-- Supervisors -->
-        <li
-          class="nav-item {% if request.resolver_match.url_name in 'supervisor_list create_supervisor' %}menu-open{% endif %}">
-          <a href="#"
-            class="nav-link {% if request.resolver_match.url_name in 'supervisor_list create_supervisor' %}active{% endif %}">
+        <li class="nav-item {% if request.resolver_match.url_name in 'supervisor_list create_supervisor' %}menu-open{% endif %}">
+          <a href="#" class="nav-link {% if request.resolver_match.url_name in 'supervisor_list create_supervisor' %}active{% endif %}">
             <i class="nav-icon fas fa-user-alt"></i>
             <p>
-              Supervisors
+              Καθηγητές
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
@@ -83,27 +73,24 @@
               <a href="{% url 'supervisor:supervisor_list' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'supervisor_list' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>All</p>
+                <p>Όλοι οι Καθηγητές</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'supervisor:create_supervisor' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'create_supervisor' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Create New</p>
+                <p>Νέος Καθηγητής</p>
               </a>
             </li>
           </ul>
         </li>
 
-        <!-- Authors -->
-        <li
-          class="nav-item {% if request.resolver_match.url_name in 'author_list author_create' %}menu-open{% endif %}">
-          <a href="#"
-            class="nav-link {% if request.resolver_match.url_name in 'author_list author_create' %}active{% endif %}">
+        <li class="nav-item {% if request.resolver_match.url_name in 'author_list author_create' %}menu-open{% endif %}">
+          <a href="#" class="nav-link {% if request.resolver_match.url_name in 'author_list author_create' %}active{% endif %}">
             <i class="nav-icon fas fa-user-edit"></i>
             <p>
-              Authors
+              Μαθητές
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
@@ -112,96 +99,92 @@
               <a href="{% url 'supervisor:author_list' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'author_list' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>All</p>
+                <p>Όλοι οι Μαθητές</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{% url 'supervisor:author_create' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'author_create' %}active{% endif %}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Create New</p>
+                <p>Νέος Εκπαιδευτής</p>
               </a>
             </li>
           </ul>
         </li>
 
-        <!-- Courses -->
-        <li
-          class="nav-item {% if request.resolver_match.url_name in 'module_list module_create module_update module_delete lesson_list lesson_create lesson_update lesson_delete theory_section_list theory_section_create theory_section_update theory_section_delete question_list question_create question_update answer_option_list answer_option_create answer_option_update user_progress_list user_answer_list supervisor_lesson_presentation user_progress_answers' %}menu-open{% endif %}">
-          <a href="#"
-            class="nav-link {% if request.resolver_match.url_name in 'module_list module_create module_update module_delete lesson_list lesson_create lesson_update lesson_delete theory_section_list theory_section_create theory_section_update theory_section_delete question_list question_create question_update answer_option_list answer_option_create answer_option_update user_progress_list user_answer_list supervisor_lesson_presentation user_progress_answers' %}active{% endif %}">
+        <li class="nav-item {% if request.resolver_match.url_name in 'module_list module_create module_update module_delete lesson_list lesson_create lesson_update lesson_delete theory_section_list theory_section_create theory_section_update theory_section_delete question_list question_create question_update answer_option_list answer_option_create answer_option_update user_progress_list user_answer_list supervisor_lesson_presentation user_progress_answers' %}menu-open{% endif %}">
+          <a href="#" class="nav-link {% if request.resolver_match.url_name in 'module_list module_create module_update module_delete lesson_list lesson_create lesson_update lesson_delete theory_section_list theory_section_create theory_section_update theory_section_delete question_list question_create question_update answer_option_list answer_option_create answer_option_update user_progress_list user_answer_list supervisor_lesson_presentation user_progress_answers' %}active{% endif %}">
             <i class="nav-icon fas fa-user-edit"></i>
             <p>
-              Courses
+              Διαχείριση Μαθημάτων
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
+
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="{% url 'supervisor:module_list' %}" class="nav-link {% if request.resolver_match.url_name in 'module_list module_create module_update module_delete' %}active{% endif %}">
                 <i class="nav-icon fas fa-layer-group"></i>
-                <p>Modules</p>
+                <p>Θεματικές Ενότητες</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:lesson_list' %}" class="nav-link {% if request.resolver_match.url_name in 'lesson_list lesson_create lesson_update lesson_delete' %}active{% endif %}">
                 <i class="nav-icon fas fa-book"></i>
-                <p>Lessons</p>
+                <p>Μαθήματα</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:theory_section_list' %}" class="nav-link {% if request.resolver_match.url_name in 'theory_section_list theory_section_create theory_section_update theory_section_delete' %}active{% endif %}">
                 <i class="nav-icon fas fa-file-alt"></i>
-                <p>Theory Sections</p>
+                <p>Ενότητες Θεωρίας</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:question_list' %}" class="nav-link {% if request.resolver_match.url_name in 'question_list question_create question_update' %}active{% endif %}">
                 <i class="nav-icon fas fa-question-circle"></i>
-                <p>Questions</p>
+                <p>Ερωτήσεις Αξιολόγησης</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:answer_option_list' %}" class="nav-link {% if request.resolver_match.url_name in 'answer_option_list answer_option_create answer_option_update' %}active{% endif %}">
                 <i class="nav-icon fas fa-list"></i>
-                <p>Answer Options</p>
+                <p>Επιλογές Απαντήσεων</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:user_progress_list' %}" class="nav-link {% if request.resolver_match.url_name in 'user_progress_list' %}active{% endif %}">
                 <i class="nav-icon fas fa-chart-line"></i>
-                <p>User Progress</p>
+                <p>Πρόοδος Εκπαιδευομένων</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="{% url 'supervisor:user_answer_list' %}" class="nav-link {% if request.resolver_match.url_name in 'user_answer_list' %}active{% endif %}">
                 <i class="nav-icon fas fa-user-check"></i>
-                <p>User Answers</p>
+                <p>Απαντήσεις Εκπαιδευομένων</p>
               </a>
             </li>
           </ul>
         </li>
 
-        <!-- Contact -->
         <li class="nav-item">
           <a href="{% url 'supervisor:contact_list' %}"
             class="nav-link {% if request.resolver_match.url_name == 'contact_list' %}active{% endif %}">
             <i class="nav-icon fas fa-envelope"></i>
-            <p>Contact Form</p>
+            <p>Μηνύματα Επικοινωνίας</p>
           </a>
         </li>
 
-        <!-- Docs -->
         <li class="nav-item">
           <a href="https://adminlte.io/docs/3.1/" target="_blank" class="nav-link">
             <i class="nav-icon fas fa-file"></i>
-            <p>Documentation</p>
+            <p>Τεκμηρίωση</p>
           </a>
         </li>
 

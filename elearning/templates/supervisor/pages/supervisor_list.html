@@ -13,12 +13,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Dashboard</h1>
+                    <h1 class="m-0">Πίνακας Ελέγχου</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Supervisors</a></li>
-                        <li class="breadcrumb-item active">All</li>
+                        <li class="breadcrumb-item"><a href="#">Καθηγητές</a></li>
+                        <li class="breadcrumb-item active">Όλοι</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -30,11 +30,11 @@
             <div class="row">
                 <div class="col-lg-12 col-12">
                     <a href="{% url 'supervisor:create_supervisor' %}" class="btn btn-success mb-3">
-                        <i class="fas fa-plus"></i> Νέος Επόπτης
+                        <i class="fas fa-plus"></i> Νέος Καθηγητής
                     </a>
                     <div class="card">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">👥 Λίστα Εποπτών</h3>
+                            <h3 class="card-title mb-0">👥 Λίστα Καθηγητών</h3>
                         </div>
 
                         <div class="card-body">
@@ -89,7 +89,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title" id="editModalLabel">✏️ Επεξεργασία Επόπτη</h5>
+                                <h5 class="modal-title" id="editModalLabel">✏️ Επεξεργασία Καθηγητή</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

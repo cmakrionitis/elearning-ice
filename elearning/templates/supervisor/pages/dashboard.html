@@ -6,24 +6,26 @@
 
 {% block main %}
 
-<!-- Content Header -->
 <div class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-primary"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <h1 class="m-0 text-primary">
+          <i class="fas fa-tachometer-alt"></i> Πίνακας Ελέγχου
+        </h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="{% url 'supervisor:supervisor_dashboard' %}">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'supervisor:supervisor_dashboard' %}">Αρχική Σελίδα</a>
+          </li>
+          <li class="breadcrumb-item active">Πίνακας Ελέγχου</li>
         </ol>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Main Content -->
 <section class="content">
   <div class="container-fluid">
 
@@ -32,7 +34,7 @@
         <div class="small-box bg-primary">
           <div class="inner">
             <h3>{{ modules_count }}</h3>
-            <p>Modules</p>
+            <p>Θεματικές Ενότητες</p>
           </div>
           <div class="icon">
             <i class="fas fa-layer-group"></i>
@@ -47,7 +49,7 @@
         <div class="small-box bg-success">
           <div class="inner">
             <h3>{{ lessons_count }}</h3>
-            <p>Lessons</p>
+            <p>Μαθήματα</p>
           </div>
           <div class="icon">
             <i class="fas fa-book"></i>
@@ -62,7 +64,7 @@
         <div class="small-box bg-warning">
           <div class="inner">
             <h3>{{ theory_count }}</h3>
-            <p>Theory Sections</p>
+            <p>Ενότητες Θεωρίας</p>
           </div>
           <div class="icon">
             <i class="fas fa-file-alt"></i>
@@ -77,7 +79,7 @@
         <div class="small-box bg-danger">
           <div class="inner">
             <h3>{{ questions_count }}</h3>
-            <p>Questions</p>
+            <p>Ερωτήσεις Αξιολόγησης</p>
           </div>
           <div class="icon">
             <i class="fas fa-question"></i>
@@ -94,7 +96,7 @@
         <div class="small-box bg-info">
           <div class="inner">
             <h3>{{ answers_count }}</h3>
-            <p>Answer Options</p>
+            <p>Επιλογές Απαντήσεων</p>
           </div>
           <div class="icon">
             <i class="fas fa-list"></i>
@@ -109,7 +111,7 @@
         <div class="small-box bg-secondary">
           <div class="inner">
             <h3>{{ progress_count }}</h3>
-            <p>User Progress</p>
+            <p>Πρόοδος Εκπαιδευομένων</p>
           </div>
           <div class="icon">
             <i class="fas fa-chart-line"></i>
@@ -124,7 +126,7 @@
         <div class="small-box bg-dark">
           <div class="inner">
             <h3>{{ user_answers_count }}</h3>
-            <p>User Answers</p>
+            <p>Απαντήσεις Μαθητών</p>
           </div>
           <div class="icon">
             <i class="fas fa-check"></i>
@@ -139,7 +141,7 @@
         <div class="small-box bg-success">
           <div class="inner">
             <h3>{{ completed_lessons }}</h3>
-            <p>Completed Lessons</p>
+            <p>Ολοκληρωμένα Μαθήματα</p>
           </div>
           <div class="icon">
             <i class="fas fa-trophy"></i>
@@ -153,7 +155,7 @@
         <div class="small-box bg-indigo">
           <div class="inner">
             <h3>{{ supervisors_count }}</h3>
-            <p>Supervisors</p>
+            <p>Καθηγητής</p>
           </div>
           <div class="icon">
             <i class="fas fa-user-shield"></i>
@@ -168,7 +170,7 @@
         <div class="small-box bg-maroon">
           <div class="inner">
             <h3>{{ author_profiles_count }}</h3>
-            <p>Author Profiles</p>
+            <p>Μαθητές</p>
           </div>
           <div class="icon">
             <i class="fas fa-user-edit"></i>
@@ -183,7 +185,7 @@
         <div class="small-box bg-warning">
           <div class="inner">
             <h3>{{ theory_completed }}</h3>
-            <p>Theory Completed</p>
+            <p>Ολοκληρωμένες Ενότητες Θεωρίας</p>
           </div>
           <div class="icon">
             <i class="fas fa-book-reader"></i>
@@ -196,7 +198,7 @@
       <div class="col-lg-5">
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Γρήγορη Δημιουργία User + AuthorProfile</h3>
+            <h3 class="card-title">Γρήγορη Δημιουργία Εκπαιδευτή</h3>
           </div>
           <div class="card-body">
 
@@ -229,7 +231,7 @@
               </div>
 
               <button type="submit" class="btn btn-success">
-                <i class="fas fa-save"></i> Δημιουργία
+                <i class="fas fa-save"></i> Δημιουργία Εκπαιδευτή
               </button>
             </form>
 
@@ -240,18 +242,18 @@
       <div class="col-lg-7">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Λίστα Author Profiles</h3>
+            <h3 class="card-title">Λίστα Εκπαιδευτών</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover text-nowrap">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>User</th>
-                  <th>Pass</th>
-                  <th>Όνομα</th>
+                  <th>Όνομα Χρήστη</th>
+                  <th>Κωδικός</th>
+                  <th>Ονοματεπώνυμο</th>
                   <th>Email</th>
-                  <th>Modules</th>
+                  <th>Θεματικές Ενότητες</th>
                 </tr>
               </thead>
               <tbody>
@@ -290,13 +292,13 @@
                     {% for module in author.lesson_modules.all %}
                     <span class="badge badge-info mr-1">{{ module.title }}</span>
                     {% empty %}
-                    <span class="text-muted">Χωρίς module</span>
+                    <span class="text-muted">Δεν έχουν ανατεθεί θεματικές ενότητες</span>
                     {% endfor %}
                   </td>
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="5" class="text-center">Δεν υπάρχουν Author Profiles</td>
+                  <td colspan="6" class="text-center">Δεν υπάρχουν εκπαιδευτές</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -309,10 +311,8 @@
   </div>
 </section>
 
-
 {% endblock main %}
 
 {% block script_new %}
-<!-- Chart.js -->
 <script src="{% static 'AdminLte-3-2-0/plugins/chart.js/Chart.min.js' %}"></script>
 {% endblock script_new %}
