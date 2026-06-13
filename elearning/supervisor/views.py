@@ -562,7 +562,7 @@ def lesson_update(request, pk):
 
     return render(request, 'supervisor/pages/courses/lesson_form.html', {
         'form': form,
-        'page_title': 'Επεξεργασία Lesson',
+        'page_title': 'Επεξεργασία Μαθήματος',
         'object': lesson
     })
 
@@ -607,7 +607,7 @@ def theory_section_create(request):
 
     return render(request, 'supervisor/pages/courses/theory_section_form.html', {
         'form': form,
-        'page_title': 'Δημιουργία Theory Section'
+        'page_title': 'Δημιουργία Θεωρίας Μαθημάτων'
     })
 
 @login_required
@@ -626,7 +626,7 @@ def theory_section_update(request, pk):
 
     return render(request, 'supervisor/pages/courses/theory_section_form.html', {
         'form': form,
-        'page_title': 'Επεξεργασία Theory Section',
+        'page_title': 'Επεξεργασία Θεωρίας Μαθημάτων',
         'object': section
     })
 
